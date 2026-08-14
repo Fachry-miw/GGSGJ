@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GGSGJ - Forever Until End of World</title>
+    <style>
+        /* ========================================================== */
+        /* 1. VARIABEL WARNA (PALET: BLUE, CHOC, CAMEL, NAVY)         */
+        /* ========================================================== */
+        :root {
+            --color-blue: #7CA7EB;
+            --color-choc: #402924;
+            --color-camel: #CBE290;
+            --color-navy: #000B26;
+            --color-white: #F0F8FF;
+            --color-glass: rgba(255, 255, 255, 0.08);
+            --color-glass-border: rgba(255, 255, 255, 0.18);
+            --online-green: #00FF66;
+            --offline-gray: #888888;
+        }
+
+        /* ========================================================== */
+        /* 2. PENGATURAN FONT & FALLBACK                              */
+        /* ========================================================== */
+        @font-face {
+            font-family: 'BackWild';
+            src: url('BackWild.ttf') format('truetype');
+            font-weight: normal; font-style: normal;
+        }
+        @font-face {
+            font-family: 'BlomGrafo';
+            src: url('BlomGrafo.ttf') format('truetype');
+            font-weight: normal; font-style: normal;
+        }
+
+        /* Opsi 1: Back Wild -> Opsi 2: Blom Grafo -> Opsi 3: Impact */
+        .title-font {
+            font-family: 'BackWild', 'BlomGrafo', 'Impact', sans-serif;
+            letter-spacing: 2px;
+        }
+
+        /* Opsi 1: Back Wild -> Opsi 2: Blom Grafo -> Opsi 3: Chewy Reguler */
+        .subtitle-font {
+            font-family: 'BackWild', 'BlomGrafo', 'Chewy', 'Comic Sans MS', cursive;
+            letter-spacing: 1px;
+        }
+
+        * {
+            box-sizing: border-box; margin: 0; padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--color-navy);
+            color: var(--color-white);
+            height: 100vh; width: 100vw;
+            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-navy); }
+        ::-webkit-scrollbar-thumb { background: var(--color-blue); border-radius: 4px; }
+
+        /* ========================================================== */
+        /* 3. MANAJEMEN HALAMAN (SPA SYSTEM)                          */
+        /* ========================================================== */
+        .page {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: none; opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+            flex-direction: column; justify-content: center; align-items: center;
+        }
+        .page.active { display: flex; opacity: 1; z-index: 10; }
+
+        /* Canvas Background untuk Halaman Index & Login */
+        #bg-canvas {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1; pointer-events: none;
+        }
+
+        /* ========================================================== */
+        /* 4. HALAMAN 1: JUDUL UTAMA                                  */
+        /* ========================================================== */
+        #page-index {
+            background: linear-gradient(135deg, var(--color-navy) 0%, var(--color-blue) 100%);
+        }
+
+        .index-title-main {
+            font-size: 7rem; color: var(--color-camel);
+            text-shadow: 6px 6px 0px var(--color-choc), 10px 10px 20px rgba(0,0,0,0.6);
+            margin-bottom: 0; text-align: center;
+            animation: pulseTitle 3s ease-in-out infinite;
+        }
+        @keyframes pulseTitle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        .index-subtitle-main {
+            font-size: 2rem; color: var(--color-white);
+            margin-bottom: 4rem; text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+        }
+
+        /* Animasi Tombol Gelembung */
+        .bubble-btn {
+            position: relative; padding: 1.5rem 4rem;
+            font-size: 1.8rem; color: var(--color-white);
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px; cursor: pointer;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2), inset 0 0 20px rgba(255,255,255,0.1);
+            transition: all 0.3s ease; overflow: hidden;
+        }
+        .bubble-btn:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-5px); }
+        .bubble-effect {
+            position: absolute; background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%; transform: scale(0); pointer-events: none;
+        }
+        .bubble-btn.pop .bubble-effect { animation: bubbleExplode 0.5s ease-out forwards; }
+        @keyframes bubbleExplode {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(4); opacity: 0; }
+        }
+
+        /* ========================================================== */
+        /* 5. HALAMAN 2: LOGIN (KACA RETAK & PECAH)                   */
+        /* ========================================================== */
+        #page-login { background-color: var(--color-choc); }
+        .login-card {
+            background: var(--color-glass); padding: 4rem; border-radius: 20px;
+            backdrop-filter: blur(20px); border: 1px solid var(--color-glass-border);
+            width: 90%; max-width: 450px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+        .login-card h1 {
+            font-size: 4rem; color: var(--color-blue);
+            margin-bottom: 2.5rem; text-shadow: 3px 3px 0px #000;
+        }
+        .form-group { margin-bottom: 1.5rem; text-align: left; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-size: 1.1rem; color: var(--color-camel); }
+        .form-group input {
+            width: 100%; padding: 1.2rem; border-radius: 12px;
+            border: 1px solid var(--color-glass-border);
+            background: rgba(0, 0, 0, 0.5); color: var(--color-white); font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        .form-group input:focus { outline: none; border-color: var(--color-blue); box-shadow: 0 0 15px rgba(124, 167, 235, 0.5); }
+        
+        .glass-login-btn {
+            width: 100%; padding: 1.2rem; font-size: 1.3rem; font-weight: bold;
+            color: var(--color-white); background: rgba(255,255,255,0.1);
+            border: 1px solid var(--color-glass-border); border-radius: 12px;
+            cursor: pointer; position: relative; overflow: hidden; margin-top: 1rem; transition: 0.3s;
+        }
+        .glass-login-btn:hover { background: rgba(255,255,255,0.2); }
+
+        /* Animasi Kaca Retak (Salah) */
+        .glass-login-btn.cracked::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M10,10 L45,40 L30,70 M90,20 L50,45 L70,90 M20,80 L50,45 L80,10" stroke="white" stroke-width="2" fill="none"/></svg>');
+            background-size: cover; animation: crackAnim 0.3s forwards; pointer-events: none;
+        }
+        @keyframes crackAnim { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+
+        /* Animasi Kaca Pecah (Benar) */
+        .glass-login-btn.shattered { animation: shatterAnim 0.5s ease-out forwards; pointer-events: none; }
+        @keyframes shatterAnim {
+            0% { transform: scale(1); opacity: 1; }
+            40% { transform: scale(1.1) rotate(2deg); filter: brightness(2); }
+            100% { transform: scale(0); opacity: 0; }
+        }
+        .error-text { color: #ff5e5e; margin-top: 1rem; font-size: 1rem; display: none; font-weight: bold; }
+
+        /* ========================================================== */
+        /* 6. HALAMAN UTAMA (WORKSPACE)                               */
+        /* ========================================================== */
+        #page-main { flex-direction: row; justify-content: flex-start; align-items: flex-start; background-color: var(--color-navy); }
+        .app-header {
+            position: fixed; top: 0; left: 0; width: 100%; height: 75px;
+            background-color: var(--color-choc); display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2.5rem; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+        }
+        .header-title { font-size: 2.2rem; color: var(--color-blue); text-shadow: 2px 2px 0px #000; }
+        
+        /* Hamburger Menu */
+        .hamburger-menu { cursor: pointer; display: flex; flex-direction: column; gap: 6px; z-index: 110; }
+        .hamburger-menu span { display: block; width: 35px; height: 4px; background-color: var(--color-camel); border-radius: 4px; transition: all 0.3s ease; }
+        .hamburger-menu.open span:nth-child(1) { transform: rotate(45deg) translate(7px, 7px); }
+        .hamburger-menu.open span:nth-child(2) { opacity: 0; }
+        .hamburger-menu.open span:nth-child(3) { transform: rotate(-45deg) translate(7px, -7px); }
+
+        /* Sidebar Navigasi */
+        .app-sidebar {
+            position: fixed; top: 75px; left: -300px; width: 300px; height: calc(100vh - 75px);
+            background: rgba(0, 11, 38, 0.98); border-right: 1px solid var(--color-blue);
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 90; padding-top: 2rem;
+        }
+        .app-sidebar.open { left: 0; }
+        .sidebar-list { list-style: none; }
+        .sidebar-item {
+            padding: 1.5rem 2.5rem; font-size: 1.3rem; cursor: pointer;
+            border-bottom: 1px solid rgba(124, 167, 235, 0.1); transition: all 0.3s;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            background: rgba(124, 167, 235, 0.15); color: var(--color-camel);
+            padding-left: 3rem; border-left: 6px solid var(--color-blue); font-weight: bold;
+        }
+
+        /* Konten Panel */
+        .app-content {
+            margin-top: 75px; width: 100%; height: calc(100vh - 75px);
+            padding: 3rem; overflow-y: auto; transition: margin-left 0.4s ease;
+        }
+        .content-panel { display: none; opacity: 0; transform: translateY(20px); transition: all 0.4s ease; }
+        .content-panel.active-panel { display: block; opacity: 1; transform: translateY(0); }
+        .panel-heading { font-size: 3rem; color: var(--color-camel); margin-bottom: 2rem; border-bottom: 2px solid var(--color-glass-border); padding-bottom: 10px; }
+
+        /* Panel History */
+        .history-box {
+            background: var(--color-glass); padding: 3rem; border-radius: 16px;
+            border-left: 8px solid var(--color-camel); font-size: 1.5rem; line-height: 1.8;
+            max-width: 900px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); font-style: italic;
+        }
+
+        /* Panel Members */
+        .members-grid { display: flex; flex-direction: column; gap: 1.2rem; max-width: 800px; }
+        .member-card {
+            background: linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.3) 100%);
+            padding: 1.5rem 2rem; border-radius: 15px; display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid var(--color-glass-border); transition: transform 0.2s;
+        }
+        .member-card:hover { transform: scale(1.02); border-color: var(--color-blue); }
+        .member-info-group { display: flex; align-items: center; gap: 20px; font-size: 1.4rem; font-weight: bold; }
+        .role-tag { font-size: 1rem; padding: 5px 15px; border-radius: 25px; font-weight: normal; }
+        .role-admin { background-color: rgba(203, 226, 144, 0.2); color: var(--color-camel); border: 1px solid var(--color-camel); }
+        .role-member { background-color: rgba(124, 167, 235, 0.2); color: var(--color-blue); border: 1px solid var(--color-blue); }
+        .status-indicator { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; }
+        .status-dot { width: 14px; height: 14px; border-radius: 50%; }
+        .status-dot.online { background-color: var(--online-green); box-shadow: 0 0 12px var(--online-green); animation: blink 2s infinite; }
+        .status-dot.offline { background-color: var(--offline-gray); }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* Panel Memory (Dengan Sistem Upload LocalStorage) */
+        .memory-actions { margin-bottom: 2.5rem; display: flex; gap: 15px; align-items: center;}
+        .upload-btn {
+            padding: 1rem 2rem; background-color: var(--color-blue); color: var(--color-navy);
+            font-weight: bold; border: none; border-radius: 10px; cursor: pointer; font-size: 1.1rem; transition: 0.2s;
+        }
+        .upload-btn:hover { background-color: #9cbff7; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(124,167,235,0.4);}
+        #file-input { display: none; }
+        
+        .memory-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
+        .memory-card {
+            aspect-ratio: 1/1; background: var(--color-glass); border-radius: 15px; overflow: hidden;
+            position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.5); border: 1px solid var(--color-glass-border);
+        }
+        .memory-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .memory-card:hover img { transform: scale(1.1); }
+        .delete-mem-btn {
+            position: absolute; top: 10px; right: 10px; background: rgba(255,0,0,0.7); color: white;
+            border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer; font-size: 0.9rem;
+        }
+
+        /* Panel Biodata */
+        .biodata-form-box {
+            background: var(--color-glass); padding: 3rem; border-radius: 20px;
+            border: 1px solid var(--color-glass-border); max-width: 700px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .biodata-form-box p { font-size: 1.2rem; margin-bottom: 2rem; color: var(--color-camel); }
+        .biodata-form-box .form-group input { background: rgba(0,0,0,0.4); color: var(--color-white); font-size: 1.1rem; border-radius: 8px;}
+        .save-biodata-btn {
+            background-color: var(--color-camel); color: var(--color-choc); font-weight: bold;
+            width: 100%; padding: 1.2rem; border: none; border-radius: 12px; cursor: pointer; font-size: 1.2rem; transition: 0.3s; margin-top: 1rem;
+        }
+        .save-biodata-btn:hover { background-color: #dcf59c; box-shadow: 0 5px 15px rgba(203, 226, 144, 0.4); }
+
+        /* Toast Notifikasi */
+        #toast {
+            visibility: hidden; min-width: 250px; background-color: var(--color-blue); color: var(--color-navy);
+            text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 1000;
+            left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: bold; font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+        @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
+
+        /* Responsif */
+        @media(max-width: 768px) {
+            .index-title-main { font-size: 4.5rem; } .index-subtitle-main { font-size: 1.3rem; }
+            .app-sidebar.open + .app-content { filter: blur(5px); pointer-events: none; }
+            .member-card { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .app-content { padding: 1.5rem; } .panel-heading { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas Partikel Background -->
+    <canvas id="bg-canvas"></canvas>
+    
+    <!-- Toast Notification -->
+    <div id="toast">Notifikasi</div>
+
+    <!-- HALAMAN 1 -->
+    <div id="page-index" class="page active">
+        <h1 class="index-title-main title-font">GGSGJ</h1>
+        <p class="index-subtitle-main subtitle-font">Forever until end of world</p>
+        <button class="bubble-btn" onclick="triggerBubble(this)">Let's start</button>
+    </div>
+
+    <!-- HALAMAN 2 -->
+    <div id="page-login" class="page">
+        <div class="login-card">
+            <h1 class="title-font">GGSGJ</h1>
+            <form onsubmit="handleLoginSubmit(event)">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="username-input" autocomplete="off" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password-input" required>
+                </div>
+                <button type="submit" id="login-action-btn" class="glass-login-btn">Login</button>
+            </form>
+            <p id="login-error-msg" class="error-text">Ups, password/username salah!</p>
+        </div>
+    </div>
+
+    <!-- HALAMAN 3 -->
+    <div id="page-main" class="page">
+        <header class="app-header">
+            <h2 class="header-title title-font">GGSGJ</h2>
+            <div class="hamburger-menu" id="hamburger-btn" onclick="toggleSidebar()">
+                <span></span><span></span><span></span>
+            </div>
+        </header>
+
+        <nav class="app-sidebar" id="app-sidebar">
+            <ul class="sidebar-list">
+                <li class="sidebar-item active" onclick="switchPanel('history', this)">History</li>
+                <li class="sidebar-item" onclick="switchPanel('members', this)">Members</li>
+                <li class="sidebar-item" onclick="switchPanel('memory', this)">Memory</li>
+                <li class="sidebar-item" onclick="switchPanel('biodata', this)">My Biodata</li>
+                <li class="sidebar-item" style="color:#ff5e5e; margin-top:2rem;" onclick="logout()">Logout</li>
+            </ul>
+        </nav>
+
+        <main class="app-content">
+            <!-- History -->
+            <section id="panel-history" class="content-panel active-panel">
+                <h2 class="panel-heading title-font">Our History</h2>
+                <div class="history-box">
+                    "Berawal di sekola yang penuh cerita dan disini terbentuknya sebuah kelompok ga jelas namun memiliki tujuan hidup."
+                </div>
+            </section>
+
+            <!-- Members -->
+            <section id="panel-members" class="content-panel">
+                <h2 class="panel-heading title-font">Circle Members</h2>
+                <div class="members-grid" id="members-list-container">
+                    <!-- Rendered via JS -->
+                </div>
+            </section>
+
+            <!-- Memory -->
+            <section id="panel-memory" class="content-panel">
+                <h2 class="panel-heading title-font">Our Memories</h2>
+                <div class="memory-actions">
+                    <button class="upload-btn" onclick="document.getElementById('file-input').click()">Upload Memory</button>
+                    <input type="file" id="file-input" accept="image/*" onchange="handleImageUpload(event)">
+                </div>
+                <div class="memory-gallery" id="memory-gallery-container">
+                    <!-- Images Rendered via JS -->
+                </div>
+            </section>
+
+            <!-- Biodata -->
+            <section id="panel-biodata" class="content-panel">
+                <h2 class="panel-heading title-font">Biodata</h2>
+                <div class="biodata-form-box">
+                    <p>Halo, <span id="current-user-greeting" style="font-weight: bold; color: var(--color-white);"></span>! Edit biodata kamu di sini.</p>
+                    <form onsubmit="saveBiodata(event)">
+                        <div class="form-group">
+                            <label>Nama Lengkap</label>
+                            <input type="text" id="bio-fullname" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Umur</label>
+                            <input type="number" id="bio-age" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tanggal Ulang Tahun</label>
+                            <input type="date" id="bio-birthday" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nama Sekolah</label>
+                            <input type="text" id="bio-school" required>
+                        </div>
+                        <button type="submit" class="save-biodata-btn">Simpan Biodata</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        /* ==========================================================
+           DATA & STATE MANAGEMENT
+           ========================================================== */
+        // Kunci Login. Status 'offline' semua secara default.
+        const CIRCLE_USERS = {
+            "hafiz":  { pass: "AdminHafiz", name: "Hafiz", role: "admin" },
+            "alif":   { pass: "AlifAdmin", name: "Alif", role: "admin" },
+            "rooney": { pass: "RooneyAlgava", name: "Rooney", role: "admin" },
+            "fachry": { pass: "Farnovgun", name: "Fachry", role: "member" },
+            "david":  { pass: "Davidmember", name: "David", role: "member" },
+            "farel":  { pass: "Farelbucin", name: "Farel", role: "member" },
+            "fathir": { pass: "Fathirkeren", name: "Fathir", role: "member" }
+        };
+
+        let activeUserKey = null;
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.className = "show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        /* ==========================================================
+           NAVIGASI & UI LOGIC
+           ========================================================== */
+        function changePage(targetPageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(targetPageId).classList.add('active');
+        }
+
+        function triggerBubble(btn) {
+            const circle = document.createElement('span');
+            circle.classList.add('bubble-effect');
+            const d = Math.max(btn.clientWidth, btn.clientHeight);
+            circle.style.width = circle.style.height = `${d}px`;
+            circle.style.left = `0px`; circle.style.top = `0px`;
+            btn.appendChild(circle);
+            btn.classList.add('pop');
+            setTimeout(() => { circle.remove(); btn.classList.remove('pop'); changePage('page-login'); }, 450);
+        }
+
+        /* ==========================================================
+           SISTEM LOGIN (STATUS ONLINE DINAMIS)
+           ========================================================== */
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const uInput = document.getElementById('username-input').value.trim().toLowerCase();
+            const pInput = document.getElementById('password-input').value.trim();
+            const btn = document.getElementById('login-action-btn');
+            const errMsg = document.getElementById('login-error-msg');
+
+            btn.classList.remove('cracked', 'shattered');
+            errMsg.style.display = 'none';
+
+            if (CIRCLE_USERS[uInput] && CIRCLE_USERS[uInput].pass === pInput) {
+                // LOGIN BERHASIL
+                activeUserKey = uInput; 
+                btn.classList.add('shattered');
+                
+                setTimeout(() => {
+                    initApp(uInput);
+                    changePage('page-main');
+                    btn.classList.remove('shattered');
+                    showToast(`Selamat datang, ${CIRCLE_USERS[uInput].name}!`);
+                }, 450);
+            } else {
+                // LOGIN GAGAL
+                btn.classList.add('cracked');
+                errMsg.style.display = 'block';
+                setTimeout(() => { btn.classList.remove('cracked'); }, 400);
+            }
+        }
+
+        function logout() {
+            activeUserKey = null;
+            document.getElementById('username-input').value = '';
+            document.getElementById('password-input').value = '';
+            changePage('page-login');
+            toggleSidebar(); // Tutup sidebar
+        }
+
+        /* ==========================================================
+           INISIALISASI WORKSPACE & DATA LOCALSTORAGE
+           ========================================================== */
+        function initApp(userKey) {
+            const userData = CIRCLE_USERS[userKey];
+            
+            // 1. Render Member List Dinamis (HANYA user yg login yg ONLINE)
+            const listContainer = document.getElementById('members-list-container');
+            listContainer.innerHTML = '';
+
+            // Looping semua user untuk di render
+            for (let key in CIRCLE_USERS) {
+                let member = CIRCLE_USERS[key];
+                let isAdmin = member.role === 'admin';
+                // DINAMIS: True jika key yang sedang di-loop sama dengan key user yang login (Contoh: alif == alif)
+                let isOnline = (key === activeUserKey); 
+
+                listContainer.innerHTML += `
+                    <div class="member-card">
+                        <div class="member-info-group">
+                            <span>${member.name}</span>
+                            <span class="role-tag ${isAdmin ? 'role-admin' : 'role-member'}">${isAdmin ? 'Admin' : 'Member'}</span>
+                        </div>
+                        <div class="status-indicator">
+                            <span class="status-dot ${isOnline ? 'online' : 'offline'}"></span>
+                            <span style="color: ${isOnline ? 'var(--color-white)' : 'var(--offline-gray)'};">
+                                ${isOnline ? 'Online' : 'Offline'}
+                            </span>
+                        </div>
+                    </div>`;
+            }
+
+            // 2. Load Biodata dari LocalStorage (Berdasarkan Akun yg Login)
+            document.getElementById('current-user-greeting').innerText = userData.name;
+            const savedBio = JSON.parse(localStorage.getItem(`biodata_${userKey}`)) || {};
+            document.getElementById('bio-fullname').value = savedBio.fullname || userData.name;
+            document.getElementById('bio-age').value = savedBio.age || '';
+            document.getElementById('bio-birthday').value = savedBio.birthday || '';
+            document.getElementById('bio-school').value = savedBio.school || '';
+
+            // 3. Load Gallery Foto
+            renderMemoryGallery();
+        }
+
+        // Sidebar Controller
+        function toggleSidebar() {
+            document.getElementById('app-sidebar').classList.toggle('open');
+            document.getElementById('hamburger-btn').classList.toggle('open');
+        }
+
+        function switchPanel(panelName, el) {
+            document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active-panel'));
+            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+            document.getElementById(`panel-${panelName}`).classList.add('active-panel');
+            el.classList.add('active');
+            if (window.innerWidth <= 768) toggleSidebar();
+        }
+
+        /* ==========================================================
+           FITUR SIMPAN BIODATA (LOCALSTORAGE)
+           ========================================================== */
+        function saveBiodata(e) {
+            e.preventDefault();
+            const bioData = {
+                fullname: document.getElementById('bio-fullname').value,
+                age: document.getElementById('bio-age').value,
+                birthday: document.getElementById('bio-birthday').value,
+                school: document.getElementById('bio-school').value
+            };
+            localStorage.setItem(`biodata_${activeUserKey}`, JSON.stringify(bioData));
+            showToast("Biodata berhasil disimpan!");
+        }
+
+        /* ==========================================================
+           FITUR UPLOAD FOTO MEMORY (BASE64 & LOCALSTORAGE)
+           ========================================================== */
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const base64Image = event.target.result;
+                let memories = JSON.parse(localStorage.getItem('ggsgj_memories')) || [];
+                memories.push(base64Image);
+                localStorage.setItem('ggsgj_memories', JSON.stringify(memories));
+                renderMemoryGallery();
+                showToast("Foto berhasil diupload!");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderMemoryGallery() {
+            const gallery = document.getElementById('memory-gallery-container');
+            const memories = JSON.parse(localStorage.getItem('ggsgj_memories')) || [];
+            gallery.innerHTML = '';
+            
+            if (memories.length === 0) {
+                gallery.innerHTML = '<p style="color:gray; grid-column: 1/-1;">Belum ada memori. Yuk upload foto pertama kalian!</p>';
+                return;
+            }
+
+            memories.forEach((imgSrc, index) => {
+                gallery.innerHTML += `
+                    <div class="memory-card">
+                        <img src="${imgSrc}" alt="Memory ${index}">
+                        <button class="delete-mem-btn" onclick="deleteMemory(${index})">Hapus</button>
+                    </div>`;
+            });
+        }
+
+        function deleteMemory(index) {
+            if(confirm("Yakin ingin menghapus foto kenangan ini?")) {
+                let memories = JSON.parse(localStorage.getItem('ggsgj_memories')) || [];
+                memories.splice(index, 1);
+                localStorage.setItem('ggsgj_memories', JSON.stringify(memories));
+                renderMemoryGallery();
+            }
+        }
+
+        /* ==========================================================
+           ANIMASI PARTIKEL BACKGROUND (CANVAS API)
+           ========================================================== */
+        const canvas = document.getElementById("bg-canvas");
+        const ctx = canvas.getContext("2d");
+        let particlesArray = [];
+
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particlesArray = [];
+            const numberOfParticles = (canvas.width * canvas.height) / 15000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = (Math.random() * 3) + 1;
+                let x = Math.random() * innerWidth;
+                let y = Math.random() * innerHeight;
+                let dirX = (Math.random() * 1) - 0.5;
+                let dirY = (Math.random() * 1) - 0.5;
+                let color = Math.random() > 0.5 ? '#7CA7EB' : '#CBE290'; // Blue & Camel dots
+                particlesArray.push({x, y, dirX, dirY, size, color});
+            }
+        }
+
+        function animateParticles() {
+            requestAnimationFrame(animateParticles);
+            ctx.clearRect(0, 0, innerWidth, innerHeight);
+            
+            for (let i = 0; i < particlesArray.length; i++) {
+                let p = particlesArray[i];
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = 0.4;
+                ctx.fill();
+
+                p.x += p.dirX;
+                p.y += p.dirY;
+
+                if (p.x > innerWidth || p.x < 0) p.dirX = -p.dirX;
+                if (p.y > innerHeight || p.y < 0) p.dirY = -p.dirY;
+            }
+        }
+
+        window.addEventListener('resize', initCanvas);
+        initCanvas();
+        animateParticles();
+    </script>
+</body>
+</html>
