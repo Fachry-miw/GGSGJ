@@ -66,18 +66,30 @@ function triggerBubble(btn) {
     }, 450);
 }
 
+// UPDATE FASE 1: Menu Bulat Melayang
 function toggleSidebar() {
-    document.getElementById('app-sidebar').classList.toggle('open');
+    document.getElementById('floating-menu').classList.toggle('open');
     document.getElementById('hamburger-btn').classList.toggle('open');
 }
 
+// UPDATE FASE 1: Switch Panel menyesuaikan tombol bulat
 function switchPanel(panelName, el) {
     document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active-panel'));
-    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.circle-btn').forEach(i => i.classList.remove('active'));
     document.getElementById(`panel-${panelName}`).classList.add('active-panel');
     el.classList.add('active');
-    if (window.innerWidth <= 768) toggleSidebar();
+    
+    // Tutup menu bulat secara otomatis setelah diklik
+    toggleSidebar();
 }
+
+// UPDATE FASE 1: Fungsi pilih Avatar UI
+function selectAvatar(el, seedName) {
+    document.querySelectorAll('.avatar-option').forEach(img => img.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('bio-avatar').value = `https://api.dicebear.com/7.x/adventurer/svg?seed=${seedName}`;
+}
+
 
 // ================= AUTH & REAL-TIME STATUS =================
 function handleLoginSubmit(e) {
@@ -94,7 +106,6 @@ function handleLoginSubmit(e) {
         activeUserKey = uInput;
         localStorage.setItem('ggsgj_logged_user', uInput);
         
-        // Animasi Kaca Pecah
         btn.classList.add('shattered');
         setTimeout(() => {
             setupFirebaseRealtime();
@@ -114,17 +125,13 @@ function setupFirebaseRealtime() {
     const userData = CIRCLE_USERS[activeUserKey];
     document.getElementById('current-user-greeting').innerText = userData.name;
 
-    // 1. Set Status Online & Session 1 Device
     const userStatusRef = db.ref('status/' + activeUserKey);
     const userSessionRef = db.ref('sessions/' + activeUserKey);
 
     userSessionRef.set(currentSessionId);
     userStatusRef.set('online');
-    
-    // Kalau tiba-tiba tab di-close atau koneksi putus, otomatis jadi offline
     userStatusRef.onDisconnect().set('offline');
 
-    // Mencegah Login Ganda (Single Device Force Logout)
     userSessionRef.on('value', (snapshot) => {
         const activeSession = snapshot.val();
         if (activeSession && activeSession !== currentSessionId) {
@@ -133,21 +140,23 @@ function setupFirebaseRealtime() {
         }
     });
 
-    // 2. Tarik Data Biodata
+    // Tarik Data Biodata & Avatar
     db.ref('biodata/' + activeUserKey).once('value', (snap) => {
         const savedBio = snap.val() || {};
         document.getElementById('bio-fullname').value = savedBio.fullname || userData.name;
         document.getElementById('bio-age').value = savedBio.age || '';
         document.getElementById('bio-birthday').value = savedBio.birthday || '';
         document.getElementById('bio-school').value = savedBio.school || '';
+        
+        if(savedBio.avatar) {
+             document.getElementById('bio-avatar').value = savedBio.avatar;
+        }
     });
 
-    // 3. Listener Realtime Member Online
     db.ref('status').on('value', (snap) => {
         renderMemberList(snap.val() || {});
     });
 
-    // 4. Listener Realtime Gallery Memory
     db.ref('memories').on('value', (snap) => {
         renderMemoryGallery(snap.val() || {});
     });
@@ -156,14 +165,18 @@ function setupFirebaseRealtime() {
 function logout() {
     if (activeUserKey) {
         db.ref('status/' + activeUserKey).set('offline');
-        db.ref('sessions/' + activeUserKey).off(); // Matikan listener
+        db.ref('sessions/' + activeUserKey).off(); 
     }
     activeUserKey = null;
     localStorage.removeItem('ggsgj_logged_user');
     document.getElementById('username-input').value = '';
     document.getElementById('password-input').value = '';
     changePage('page-login');
-    if(document.getElementById('app-sidebar').classList.contains('open')) toggleSidebar();
+    
+    // Pastikan menu melayang tertutup saat logout
+    document.getElementById('floating-menu').classList.remove('open');
+    document.getElementById('hamburger-btn').classList.remove('open');
+    
     showToast("Berhasil logout.");
 }
 
@@ -172,25 +185,34 @@ function renderMemberList(statusData) {
     if (!listContainer) return;
     listContainer.innerHTML = '';
 
-    for (let key in CIRCLE_USERS) {
-        let member = CIRCLE_USERS[key];
-        let isAdmin = member.role === 'admin';
-        let isOnline = (statusData[key] === 'online');
+    // BONUS: Ambil data avatar semua user untuk ditampilkan di list
+    db.ref('biodata').once('value', (bioSnap) => {
+        const allBios = bioSnap.val() || {};
 
-        listContainer.innerHTML += `
-            <div class="member-card">
-                <div class="member-info-group">
-                    <span>${member.name}</span>
-                    <span class="role-tag ${isAdmin ? 'role-admin' : 'role-member'}">${isAdmin ? 'Admin' : 'Member'}</span>
-                </div>
-                <div class="status-indicator">
-                    <span class="status-dot ${isOnline ? 'online' : 'offline'}"></span>
-                    <span style="color: ${isOnline ? 'var(--color-white)' : 'var(--offline-gray)'};">
-                        ${isOnline ? 'Online' : 'Offline'}
-                    </span>
-                </div>
-            </div>`;
-    }
+        for (let key in CIRCLE_USERS) {
+            let member = CIRCLE_USERS[key];
+            let isAdmin = member.role === 'admin';
+            let isOnline = (statusData[key] === 'online');
+            
+            // Cek avatar di database, kalau belum ada kasih avatar default sesuai namanya
+            let avatarImg = (allBios[key] && allBios[key].avatar) ? allBios[key].avatar : "https://api.dicebear.com/7.x/adventurer/svg?seed=" + member.name;
+
+            listContainer.innerHTML += `
+                <div class="member-card">
+                    <div class="member-info-group">
+                        <img src="${avatarImg}" class="member-avatar-img" alt="Avatar">
+                        <span>${member.name}</span>
+                        <span class="role-tag ${isAdmin ? 'role-admin' : 'role-member'}">${isAdmin ? 'Admin' : 'Member'}</span>
+                    </div>
+                    <div class="status-indicator">
+                        <span class="status-dot ${isOnline ? 'online' : 'offline'}"></span>
+                        <span style="color: ${isOnline ? 'var(--color-white)' : 'var(--offline-gray)'};">
+                            ${isOnline ? 'Online' : 'Offline'}
+                        </span>
+                    </div>
+                </div>`;
+        }
+    });
 }
 
 // ================= FITUR DATABASE LAINNYA =================
@@ -200,11 +222,13 @@ function saveBiodata(e) {
         fullname: document.getElementById('bio-fullname').value,
         age: document.getElementById('bio-age').value,
         birthday: document.getElementById('bio-birthday').value,
-        school: document.getElementById('bio-school').value
+        school: document.getElementById('bio-school').value,
+        avatar: document.getElementById('bio-avatar').value // Simpan URL Avatar
     };
-    // Simpan ke Firebase Realtime
     db.ref('biodata/' + activeUserKey).set(bioData).then(() => {
-        showToast("Biodata berhasil disimpan ke Cloud Server!");
+        showToast("Biodata & Avatar berhasil disimpan ke Cloud!");
+        // Refresh UI list member agar avatar langsung berubah
+        db.ref('status').once('value').then(snap => renderMemberList(snap.val() || {}));
     });
 }
 
@@ -212,7 +236,6 @@ function handleImageUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Batasi ukuran file (Optional tapi bagus untuk mencegah server penuh)
     if(file.size > 2000000) {
         alert("Ukuran foto maksimal 2MB ya, biar server nggak jebol!");
         return;
@@ -221,7 +244,6 @@ function handleImageUpload(e) {
     const reader = new FileReader();
     reader.onload = function(event) {
         const base64Image = event.target.result;
-        // Push langsung ke database Firebase
         db.ref('memories').push({
             imgSrc: base64Image,
             uploader: CIRCLE_USERS[activeUserKey].name,
@@ -243,7 +265,6 @@ function renderMemoryGallery(memoriesObj) {
         return;
     }
 
-    // Urutkan dari yang terbaru
     keys.reverse().forEach(key => {
         let mem = memoriesObj[key];
         gallery.innerHTML += `
@@ -335,7 +356,6 @@ window.addEventListener('resize', initCanvas);
 initCanvas();
 animateParticles();
 
-// Jika otomatis bypass login (karena sesi masih ada), panggil setup real-time
 if(document.getElementById('page-main').classList.contains('active') && activeUserKey) {
     setupFirebaseRealtime();
 }
