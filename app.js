@@ -2,10 +2,11 @@
    GGSGJ MAIN APPLICATION LOGIC & REAL-TIME FIREBASE ENGINE
    ========================================================== */
 
-// 1. INisialisasi Firebase dengan Kunci Rahasia Kamu
+// 1. Inisialisasi Firebase dengan Kunci Rahasia
 const firebaseConfig = {
     apiKey: "AIzaSyBjB1xv-g2tiLilmtVg4ijVRPur5Npp4HE",
     authDomain: "ggsgj-web.firebaseapp.com",
+    databaseURL: "https://ggsgj-web-default-rtdb.firebaseio.com",
     projectId: "ggsgj-web",
     storageBucket: "ggsgj-web.firebasestorage.app",
     messagingSenderId: "234555191251",
