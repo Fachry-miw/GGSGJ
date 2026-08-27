@@ -203,18 +203,36 @@ function submitQuiz(e) {
     const ans1 = document.getElementById('quiz-ans-1').value;
     const ans2 = document.getElementById('quiz-ans-2').value;
     const ans3 = document.getElementById('quiz-ans-3').value;
+    const userName = CIRCLE_USERS[activeUserKey].name;
 
+    // 1. Simpan ke LocalStorage
     let allResponses = JSON.parse(localStorage.getItem('ggsgj_quiz_data')) || {};
     allResponses[activeUserKey] = {
-        name: CIRCLE_USERS[activeUserKey].name,
+        name: userName,
         q1: ans1,
         q2: ans2,
         q3: ans3,
         time: new Date().toLocaleDateString()
     };
-
     localStorage.setItem('ggsgj_quiz_data', JSON.stringify(allResponses));
-    showToast("Jawaban quiz berhasil dikirim!");
+
+    // 2. Kirim otomatis ke Email kamu via EmailJS
+    const templateParams = {
+        from_name: userName,
+        ans_1: ans1,
+        ans_2: ans2,
+        ans_3: ans3
+    };
+
+    emailjs.send('service_bt4m9wa', 'template_iez197j', templateParams)
+        .then(function(response) {
+            showToast("Jawaban quiz berhasil dikirim ke email Fachry!");
+            document.getElementById('quiz-form').reset();
+            if(activeUserKey === 'fachry') renderQuizResponses();
+        }, function(error) {
+            showToast("Gagal mengirim email, tapi tersimpan secara lokal.");
+            console.log('FAILED...', error);
+        });
 }
 
 function renderQuizResponses() {
