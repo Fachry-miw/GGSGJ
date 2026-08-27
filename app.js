@@ -1,5 +1,5 @@
 /* ==========================================================
-   GGSGJ MAIN APPLICATION LOGIC & AI COLLABORATOR ANCHOR v3.0
+   GGSGJ MAIN APPLICATION LOGIC & AI COLLABORATOR ANCHOR v3.5
    [Anchor: AI-Collab-GGSGJ-Core-Engine]
    ========================================================== */
 
@@ -196,7 +196,7 @@ function saveBiodata(e) {
 }
 
 /* ----------------------------------------------------------
-   FITUR QUIZ & PANEL RAHASIA KHUSUS FACHRY
+   FITUR QUIZ & AUTO KIRIM EMAIL (EMAILJS)
    ---------------------------------------------------------- */
 function submitQuiz(e) {
     e.preventDefault();
@@ -204,6 +204,7 @@ function submitQuiz(e) {
     const ans2 = document.getElementById('quiz-ans-2').value;
     const ans3 = document.getElementById('quiz-ans-3').value;
     const userName = CIRCLE_USERS[activeUserKey].name;
+    const currentTime = new Date().toLocaleDateString();
 
     // 1. Simpan ke LocalStorage
     let allResponses = JSON.parse(localStorage.getItem('ggsgj_quiz_data')) || {};
@@ -212,16 +213,17 @@ function submitQuiz(e) {
         q1: ans1,
         q2: ans2,
         q3: ans3,
-        time: new Date().toLocaleDateString()
+        time: currentTime
     };
     localStorage.setItem('ggsgj_quiz_data', JSON.stringify(allResponses));
 
-    // 2. Kirim otomatis ke Email kamu via EmailJS
+    // 2. Kirim otomatis ke Email Fachry via EmailJS
     const templateParams = {
         from_name: userName,
         ans_1: ans1,
         ans_2: ans2,
-        ans_3: ans3
+        ans_3: ans3,
+        time: currentTime
     };
 
     emailjs.send('service_bt4m9wa', 'template_iez197j', templateParams)
