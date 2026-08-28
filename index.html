@@ -6,18 +6,14 @@
     <title>GGSGJ - Forever Until End of World</title>
     <!-- Google Fonts Modern -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome untuk Logo Menu Bulat -->
+    <!-- FontAwesome untuk Logo Menu -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link rel="stylesheet" href="style.css">
     
     <!-- EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
-       (function(){
-          emailjs.init("MbpSI16ZTHMcgju_H");
-       })();
+       (function(){ emailjs.init("MbpSI16ZTHMcgju_H"); })();
     </script>
 
     <!-- FIREBASE SDK -->
@@ -31,13 +27,14 @@
     
     <div id="toast">Notifikasi GGSGJ</div>
 
-    <!-- HALAMAN 1 & 2: TETAP SAMA (Welcome & Login) -->
+    <!-- HALAMAN 1: WELCOME -->
     <div id="page-index" class="page active">
         <h1 class="index-title-main title-font">GGSGJ</h1>
         <p class="index-subtitle-main subtitle-font">Forever until end of world</p>
         <button class="bubble-btn" onclick="triggerBubble(this)">Let's start</button>
     </div>
 
+    <!-- HALAMAN 2: LOGIN -->
     <div id="page-login" class="page">
         <div class="login-card">
             <h1 class="title-font">GGSGJ</h1>
@@ -60,28 +57,34 @@
     <div id="page-main" class="page">
         <header class="app-header">
             <h2 class="header-title title-font">GGSGJ</h2>
-            <!-- Tombol Garis Tiga (Hamburger) -->
+            <!-- Tombol Hamburger -->
             <div class="hamburger-menu" id="hamburger-btn" onclick="toggleSidebar()">
                 <span></span><span></span><span></span>
             </div>
         </header>
 
-        <!-- MENU BARU: BULAT & MELAYANG DI BAWAH GARIS TIGA -->
+        <!-- MENU MELAYANG (8 Tombol) -->
         <div class="floating-circle-menu" id="floating-menu">
-            <div class="circle-btn" onclick="switchPanel('history', this)" title="History">
-                <i class="fa-solid fa-road"></i> <!-- Sketsa Jalan -->
+            <div class="circle-btn" onclick="switchPanel('history', this)" title="Lobby & History">
+                <i class="fa-solid fa-road"></i>
             </div>
             <div class="circle-btn" onclick="switchPanel('members', this)" title="Members">
-                <i class="fa-solid fa-users"></i> <!-- Sketsa Manusia -->
+                <i class="fa-solid fa-users"></i>
             </div>
-            <div class="circle-btn" onclick="switchPanel('memory', this)" title="Memory">
-                <i class="fa-solid fa-camera-retro"></i> <!-- Kamera -->
+            <div class="circle-btn" onclick="switchPanel('memory', this)" title="Memory & Photos">
+                <i class="fa-solid fa-camera-retro"></i>
             </div>
-            <div class="circle-btn" onclick="switchPanel('biodata', this)" title="Biodata">
-                <i class="fa-solid fa-file-signature"></i> <!-- Pulpen & Kertas -->
+            <div class="circle-btn" onclick="switchPanel('biodata', this)" title="Biodata & Avatar">
+                <i class="fa-solid fa-file-signature"></i>
             </div>
             <div class="circle-btn" onclick="switchPanel('quiz', this)" title="Circle Quiz">
-                <i class="fa-solid fa-gamepad"></i> <!-- Game -->
+                <i class="fa-solid fa-gamepad"></i>
+            </div>
+            <div class="circle-btn" onclick="switchPanel('chat', this)" title="Chat Room">
+                <i class="fa-solid fa-comments"></i>
+            </div>
+            <div class="circle-btn" onclick="switchPanel('vote', this)" title="Game Voting">
+                <i class="fa-solid fa-check-to-slot"></i>
             </div>
             <div class="circle-btn btn-logout" onclick="logout()" title="Logout">
                 <i class="fa-solid fa-right-from-bracket"></i>
@@ -89,38 +92,47 @@
         </div>
 
         <main class="app-content">
-            <!-- Panel History -->
+            <!-- PANEL 1: HISTORY & LOBBY FILM ROLL -->
             <section id="panel-history" class="content-panel active-panel">
-                <h2 class="panel-heading title-font">Our History</h2>
+                <h2 class="panel-heading title-font">Lobby & History</h2>
                 <div class="history-box">
-                    "Berawal di sekola yang penuh cerita dan disini terbentuknya sebuah kelompok ga jelas namun memiliki tujuan hidup."
+                    "Berawal di sekolah yang penuh cerita dan disini terbentuknya sebuah kelompok ga jelas namun memiliki tujuan hidup."
+                </div>
+                
+                <!-- Roll Film Animasi -->
+                <h3 style="margin-top: 30px; color: var(--color-camel);">Our Journey (Film Roll)</h3>
+                <div class="film-roll-wrapper">
+                    <div class="film-roll-track" id="film-roll-track">
+                        <!-- Foto akan di-inject JS dari memori -->
+                    </div>
                 </div>
             </section>
 
-            <!-- Panel Members -->
+            <!-- PANEL 2: MEMBERS -->
             <section id="panel-members" class="content-panel">
                 <h2 class="panel-heading title-font">Circle Members</h2>
                 <div class="members-grid" id="members-list-container"></div>
             </section>
 
-            <!-- Panel Memory -->
+            <!-- PANEL 3: MEMORY -->
             <section id="panel-memory" class="content-panel">
                 <h2 class="panel-heading title-font">Our Memories</h2>
                 <div class="memory-actions">
-                    <button class="upload-btn" onclick="document.getElementById('file-input').click()"><i class="fa-solid fa-camera"></i> Upload Foto</button>
+                    <button class="upload-btn" onclick="document.getElementById('file-input').click()">
+                        <i class="fa-solid fa-camera"></i> Upload Foto
+                    </button>
+                    <!-- Input file tanpa batasan ketat karena sudah ada Auto-Compress -->
                     <input type="file" id="file-input" accept="image/*" onchange="handleImageUpload(event)">
                 </div>
                 <div class="memory-gallery" id="memory-gallery-container"></div>
             </section>
 
-            <!-- Panel Biodata (Diupdate dengan Avatar) -->
+            <!-- PANEL 4: BIODATA -->
             <section id="panel-biodata" class="content-panel">
                 <h2 class="panel-heading title-font">Biodata & Avatar</h2>
                 <div class="biodata-form-box">
                     <p>Halo, <span id="current-user-greeting" style="font-weight: bold; color: var(--color-camel);"></span>!</p>
-                    
                     <form onsubmit="saveBiodata(event)">
-                        <!-- Sistem Pilih Avatar -->
                         <div class="form-group">
                             <label>Pilih Avatar Karaktermu</label>
                             <div class="avatar-grid">
@@ -131,52 +143,72 @@
                                 <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Destiny" class="avatar-option" onclick="selectAvatar(this, 'Destiny')">
                                 <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jasper" class="avatar-option" onclick="selectAvatar(this, 'Jasper')">
                             </div>
-                            <!-- Input tersembunyi untuk menyimpan URL avatar -->
                             <input type="hidden" id="bio-avatar" value="https://api.dicebear.com/7.x/adventurer/svg?seed=Felix">
                         </div>
-
-                        <div class="form-group">
-                            <label>Nama Lengkap</label>
-                            <input type="text" id="bio-fullname" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Umur</label>
-                            <input type="number" id="bio-age" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Tanggal Ulang Tahun</label>
-                            <input type="date" id="bio-birthday" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Nama Sekolah</label>
-                            <input type="text" id="bio-school" required>
-                        </div>
+                        <div class="form-group"><label>Nama Lengkap</label><input type="text" id="bio-fullname" required></div>
+                        <div class="form-group"><label>Umur</label><input type="number" id="bio-age" required></div>
+                        <div class="form-group"><label>Tanggal Ulang Tahun</label><input type="date" id="bio-birthday" required></div>
+                        <div class="form-group"><label>Nama Sekolah</label><input type="text" id="bio-school" required></div>
                         <button type="submit" class="save-biodata-btn">Simpan Profil</button>
                     </form>
                 </div>
             </section>
 
-            <!-- Panel Quiz -->
+            <!-- PANEL 5: CHAT ROOM (BARU) -->
+            <section id="panel-chat" class="content-panel">
+                <h2 class="panel-heading title-font">GGSGJ Chat Room</h2>
+                <div class="chat-layout">
+                    <!-- Sidebar Jalur Chat -->
+                    <div class="chat-sidebar">
+                        <div class="chat-channel-title"><i class="fa-solid fa-earth-americas"></i> Public Room</div>
+                        <ul class="chat-channel-list">
+                            <li class="chat-channel-item active" onclick="switchChatChannel('public', this)"># GGSGJ Lounge</li>
+                        </ul>
+                        <div class="chat-channel-title"><i class="fa-solid fa-lock"></i> Direct Message</div>
+                        <ul class="chat-channel-list" id="dm-users-list">
+                            <!-- List teman dari JS -->
+                        </ul>
+                    </div>
+                    <!-- Area Pesan Utama -->
+                    <div class="chat-main">
+                        <div class="chat-header" id="chat-active-header"># GGSGJ Lounge</div>
+                        <div class="chat-messages" id="chat-messages-container">
+                            <!-- Pesan muncul di sini -->
+                        </div>
+                        <form class="chat-input-box" onsubmit="sendChatMessage(event)">
+                            <input type="text" id="chat-input-text" placeholder="Ketik pesan..." required autocomplete="off">
+                            <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PANEL 6: VOTE GAME (BARU) -->
+            <section id="panel-vote" class="content-panel">
+                <h2 class="panel-heading title-font">Game Mabar Voting</h2>
+                <div class="history-box" style="margin-bottom: 20px; font-size: 1.1rem; padding: 1.5rem;">
+                    Biar nggak bingung mau mabar apa, silakan vote game favorit kalian di bawah ini!
+                </div>
+                <div class="vote-container" id="vote-container">
+                    <!-- Voting di-inject oleh JS -->
+                </div>
+            </section>
+
+            <!-- PANEL 7: QUIZ -->
             <section id="panel-quiz" class="content-panel">
                 <h2 class="panel-heading title-font">GGSGJ Circle Quiz</h2>
                 <div class="quiz-container">
                     <form id="quiz-form" onsubmit="submitQuiz(event)">
-                        <div class="quiz-q-box">
-                            <label>1. Siapa saja admin di grup WA GGSGJ?</label>
-                            <input type="text" id="quiz-ans-1" placeholder="Tulis jawabanmu..." required>
-                        </div>
-                        <div class="quiz-q-box">
-                            <label>2. Siapa saja anggota pertama yang masuk ke GGSGJ?</label>
-                            <input type="text" id="quiz-ans-2" placeholder="Tulis jawabanmu..." required>
-                        </div>
-                        <div class="quiz-q-box">
-                            <label>3. Siapa anggota yang menurut kalian "spesial"?</label>
-                            <input type="text" id="quiz-ans-3" placeholder="Tulis jawabanmu..." required>
-                        </div>
+                        <div class="quiz-q-box"><label>1. Siapa saja admin di grup WA GGSGJ?</label><input type="text" id="quiz-ans-1" required></div>
+                        <div class="quiz-q-box"><label>2. Siapa anggota pertama yang masuk ke GGSGJ?</label><input type="text" id="quiz-ans-2" required></div>
+                        <div class="quiz-q-box"><label>3. Siapa anggota yang menurut kalian "spesial"?</label><input type="text" id="quiz-ans-3" required></div>
+                        <div class="quiz-q-box"><label>4. Kejadian paling konyol pas ngumpul bareng?</label><input type="text" id="quiz-ans-4" required></div>
+                        <div class="quiz-q-box"><label>5. Siapa yang paling sering ngaret kalau diajak mabar?</label><input type="text" id="quiz-ans-5" required></div>
                         <button type="submit" class="save-biodata-btn">Kirim Laporan Quiz</button>
                     </form>
                 </div>
             </section>
+
         </main>
     </div>
 
