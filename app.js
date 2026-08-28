@@ -74,15 +74,24 @@ function toggleSidebar() {
 }
 
 function switchPanel(panelName, el) {
+    // Kalau yang diklik adalah chat, maka buka halaman full-screen chat
+    if(panelName === 'chat') {
+        toggleSidebar(); 
+        changePage('page-chat');
+        openChatRoom('public');
+        return; // Hentikan fungsi panel normal
+    }
+
     document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active-panel'));
     document.querySelectorAll('.circle-btn').forEach(i => i.classList.remove('active'));
     document.getElementById(`panel-${panelName}`).classList.add('active-panel');
     el.classList.add('active');
     toggleSidebar();
-    
-    if(panelName === 'chat') {
-        openChatRoom('public');
-    }
+}
+
+// Fungsi untuk tombol kembali dari chat
+function closeChatPage() {
+    changePage('page-main');
 }
 
 function selectAvatar(el, seedName) {
@@ -220,11 +229,10 @@ function saveBiodata(e) {
     db.ref('biodata/' + activeUserKey).set(bioData).then(() => {
         showToast("Biodata & Avatar berhasil disimpan ke Cloud!");
         db.ref('status').once('value').then(snap => renderMemberList(snap.val() || {}));
-        renderChatSidebar(); // Refresh avatar di DM
+        renderChatSidebar(); 
     });
 }
 
-// FITUR AUTO-COMPRESS GAMBAR (Biar File Gede Jadi Ringan)
 function handleImageUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -236,9 +244,8 @@ function handleImageUpload(e) {
         const img = new Image();
         img.src = event.target.result;
         img.onload = function() {
-            // Proses Kompresi Pakai Canvas
             const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 800; // Resolusi aman max 800px
+            const MAX_WIDTH = 800; 
             const scaleSize = MAX_WIDTH / img.width;
             
             canvas.width = MAX_WIDTH;
@@ -247,7 +254,6 @@ function handleImageUpload(e) {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             
-            // Konversi jadi JPEG ukuran kecil (Kualitas 70%)
             const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
 
             db.ref('memories').push({
@@ -298,7 +304,7 @@ function renderChatSidebar() {
         const allBios = bioSnap.val() || {};
         
         for (let key in CIRCLE_USERS) {
-            if (key === activeUserKey) continue; // Jangan munculkan diri sendiri
+            if (key === activeUserKey) continue; 
             
             let member = CIRCLE_USERS[key];
             let avatarImg = (allBios[key] && allBios[key].avatar) ? allBios[key].avatar : "https://api.dicebear.com/7.x/adventurer/svg?seed=" + member.name;
@@ -316,11 +322,9 @@ function renderChatSidebar() {
 function openChatRoom(targetMode) {
     currentChatMode = targetMode;
     
-    // Hapus class active di semua tab
     document.querySelectorAll('.chat-tab').forEach(el => el.classList.remove('active'));
     document.getElementById(`tab-${targetMode}`).classList.add('active');
     
-    // Ubah Judul Header
     const headerTitle = document.getElementById('chat-header-title');
     if(targetMode === 'public') {
         headerTitle.innerHTML = '🌍 Public Group';
@@ -328,15 +332,12 @@ function openChatRoom(targetMode) {
         headerTitle.innerHTML = `🔒 Private Chat - ${CIRCLE_USERS[targetMode].name}`;
     }
 
-    // Tentukan Jalur Database (Public vs Private)
     let chatPath = 'chats/public';
     if(targetMode !== 'public') {
-        // Buat ID unik antara 2 orang (Diurutkan abjad agar chatroom-nya sama 2 arah)
         const roomKey = [activeUserKey, targetMode].sort().join('_');
         chatPath = 'chats/private/' + roomKey;
     }
 
-    // Matikan listener sebelumnya supaya gak nyangkut
     if(chatListenerRef) chatListenerRef.off();
 
     const box = document.getElementById('chat-messages-box');
@@ -351,13 +352,10 @@ function openChatRoom(targetMode) {
             return;
         }
 
-        // Render Balon Chat
         Object.keys(data).forEach(key => {
             const msg = data[key];
             const isMe = (msg.sender === activeUserKey);
             const senderName = CIRCLE_USERS[msg.sender].name;
-            
-            // Format waktu simple HH:MM
             const timeStr = new Date(msg.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
             box.innerHTML += `
@@ -370,7 +368,6 @@ function openChatRoom(targetMode) {
             `;
         });
         
-        // Auto scroll ke bawah tiap ada pesan baru
         box.scrollTop = box.scrollHeight;
     });
 }
