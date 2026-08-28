@@ -99,40 +99,53 @@ body {
 .hamburger-menu.open span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
 
 /* ==========================================================
-   DESAIN MENU BULAT MELAYANG (PENGGANTI SIDEBAR LAMA)
+   DESAIN MENU RADIAL / SCATTERED MENYEBAR
    ========================================================== */
 .floating-circle-menu {
-    position: fixed; top: 90px; right: 2.5rem; /* Posisinya tepat di bawah garis tiga */
-    display: flex; flex-direction: column; gap: 15px;
-    opacity: 0; pointer-events: none; transform: translateY(-20px);
-    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    position: fixed;
+    top: 10px; /* Posisi sejajar garis tiga */
+    right: 2.5rem;
+    width: 50px; 
+    height: 50px;
     z-index: 90;
+    pointer-events: none; /* Supaya klik tidak terhalang saat menu tertutup */
 }
-.floating-circle-menu.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.floating-circle-menu.open {
+    pointer-events: auto;
+}
 
 .circle-btn {
+    position: absolute;
+    top: 5px; right: 0px; /* Semua bertumpuk di titik awal (garis 3) */
     width: 55px; height: 55px; border-radius: 50%;
     background: var(--color-glass); border: 1px solid var(--color-glass-border);
     display: flex; justify-content: center; align-items: center;
     color: var(--color-white); font-size: 1.4rem; cursor: pointer;
     box-shadow: 0 5px 15px rgba(0,0,0,0.5); backdrop-filter: blur(10px);
-    transition: all 0.3s ease; position: relative;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    opacity: 0; transform: scale(0) translate(0, 0);
 }
-.circle-btn:hover, .circle-btn.active {
-    background: var(--color-blue); color: var(--color-navy);
-    transform: scale(1.15) rotate(5deg); border-color: var(--color-camel);
-}
-.circle-btn.btn-logout { background: rgba(255, 50, 50, 0.2); color: #ff5e5e; border-color: #ff5e5e; margin-top: 10px; }
-.circle-btn.btn-logout:hover { background: #ff5e5e; color: white; transform: scale(1.15); }
+.circle-btn:hover { background: var(--color-blue); color: var(--color-navy); border-color: var(--color-camel); transform: scale(1.15) !important; }
+.circle-btn.active { background: var(--color-camel); color: var(--color-navy); }
+.circle-btn.btn-logout { background: rgba(255, 50, 50, 0.3); color: #ff5e5e; border-color: #ff5e5e; }
+.circle-btn.btn-logout:hover { background: #ff5e5e; color: white; }
+
+/* Koordinat Lemparan / Sebaran Tombol saat Dibuka */
+.floating-circle-menu.open .circle-btn:nth-child(1) { transform: translate(-80px, 20px) scale(1); opacity: 1; transition-delay: 0.05s; }
+.floating-circle-menu.open .circle-btn:nth-child(2) { transform: translate(-140px, 75px) scale(1); opacity: 1; transition-delay: 0.1s; }
+.floating-circle-menu.open .circle-btn:nth-child(3) { transform: translate(-160px, 145px) scale(1); opacity: 1; transition-delay: 0.15s; }
+.floating-circle-menu.open .circle-btn:nth-child(4) { transform: translate(-140px, 215px) scale(1); opacity: 1; transition-delay: 0.2s; }
+.floating-circle-menu.open .circle-btn:nth-child(5) { transform: translate(-80px, 270px) scale(1); opacity: 1; transition-delay: 0.25s; }
+.floating-circle-menu.open .circle-btn:nth-child(6) { transform: translate(0px, 290px) scale(1); opacity: 1; transition-delay: 0.3s; }
 
 /* Tooltip (Nama menu saat kursor diarahkan ke bulatannya) */
 .circle-btn::after {
-    content: attr(title); position: absolute; right: 70px;
+    content: attr(title); position: absolute; right: 65px;
     background: rgba(0,0,0,0.8); color: white; font-size: 0.85rem;
     padding: 5px 12px; border-radius: 6px; white-space: nowrap;
     opacity: 0; pointer-events: none; transition: 0.3s;
 }
-.circle-btn:hover::after { opacity: 1; right: 65px; }
+.circle-btn:hover::after { opacity: 1; right: 70px; }
 
 /* ========================================================== */
 
@@ -147,7 +160,6 @@ body {
 .member-card { background: var(--color-glass); padding: 1.2rem 1.8rem; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--color-glass-border); backdrop-filter: blur(8px); transition: transform 0.2s; }
 .member-card:hover { transform: scale(1.01); border-color: var(--color-blue); }
 .member-info-group { display: flex; align-items: center; gap: 15px; font-size: 1.2rem; font-weight: 600; }
-/* Style khusus wajah avatar di list member */
 .member-avatar-img { width: 45px; height: 45px; border-radius: 50%; background: #eee; object-fit: cover; border: 2px solid var(--color-camel); }
 
 .role-tag { font-size: 0.85rem; padding: 4px 12px; border-radius: 20px; font-weight: 500; }
@@ -171,7 +183,6 @@ body {
 
 .biodata-form-box, .quiz-container { background: var(--color-glass); padding: 2.5rem; border-radius: 18px; border: 1px solid var(--color-glass-border); max-width: 650px; backdrop-filter: blur(12px); }
 
-/* GRID AVATAR DI BIODATA */
 .avatar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 10px; }
 .avatar-option { width: 70px; height: 70px; border-radius: 50%; background: #eee; cursor: pointer; transition: 0.3s; border: 3px solid transparent; }
 .avatar-option:hover { transform: scale(1.1); }
