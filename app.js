@@ -2,7 +2,6 @@
    GGSGJ MAIN APPLICATION LOGIC & REAL-TIME FIREBASE ENGINE
    ========================================================== */
 
-// 1. Inisialisasi Firebase dengan Kunci Rahasia
 const firebaseConfig = {
     apiKey: "AIzaSyBjB1xv-g2tiLilmtVg4ijVRPur5Npp4HE",
     authDomain: "ggsgj-web.firebaseapp.com",
@@ -28,9 +27,12 @@ const CIRCLE_USERS = {
 };
 
 let activeUserKey = localStorage.getItem('ggsgj_logged_user') || null;
-// Bikin ID unik untuk setiap tab/browser yang buka web ini
 let currentSessionId = localStorage.getItem('ggsgj_session_id') || (Date.now().toString() + Math.random().toString(36).substr(2, 5));
 localStorage.setItem('ggsgj_session_id', currentSessionId);
+
+// VARIABEL UNTUK CHAT
+let currentChatMode = 'public'; 
+let chatListenerRef = null;
 
 // ================= UI & NAVIGATION =================
 function showToast(message) {
@@ -66,30 +68,28 @@ function triggerBubble(btn) {
     }, 450);
 }
 
-// UPDATE FASE 1: Menu Bulat Melayang
 function toggleSidebar() {
     document.getElementById('floating-menu').classList.toggle('open');
     document.getElementById('hamburger-btn').classList.toggle('open');
 }
 
-// UPDATE FASE 1: Switch Panel menyesuaikan tombol bulat
 function switchPanel(panelName, el) {
     document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active-panel'));
     document.querySelectorAll('.circle-btn').forEach(i => i.classList.remove('active'));
     document.getElementById(`panel-${panelName}`).classList.add('active-panel');
     el.classList.add('active');
-    
-    // Tutup menu bulat secara otomatis setelah diklik
     toggleSidebar();
+    
+    if(panelName === 'chat') {
+        openChatRoom('public');
+    }
 }
 
-// UPDATE FASE 1: Fungsi pilih Avatar UI
 function selectAvatar(el, seedName) {
     document.querySelectorAll('.avatar-option').forEach(img => img.classList.remove('selected'));
     el.classList.add('selected');
     document.getElementById('bio-avatar').value = `https://api.dicebear.com/7.x/adventurer/svg?seed=${seedName}`;
 }
-
 
 // ================= AUTH & REAL-TIME STATUS =================
 function handleLoginSubmit(e) {
@@ -140,17 +140,13 @@ function setupFirebaseRealtime() {
         }
     });
 
-    // Tarik Data Biodata & Avatar
     db.ref('biodata/' + activeUserKey).once('value', (snap) => {
         const savedBio = snap.val() || {};
         document.getElementById('bio-fullname').value = savedBio.fullname || userData.name;
         document.getElementById('bio-age').value = savedBio.age || '';
         document.getElementById('bio-birthday').value = savedBio.birthday || '';
         document.getElementById('bio-school').value = savedBio.school || '';
-        
-        if(savedBio.avatar) {
-             document.getElementById('bio-avatar').value = savedBio.avatar;
-        }
+        if(savedBio.avatar) document.getElementById('bio-avatar').value = savedBio.avatar;
     });
 
     db.ref('status').on('value', (snap) => {
@@ -160,6 +156,9 @@ function setupFirebaseRealtime() {
     db.ref('memories').on('value', (snap) => {
         renderMemoryGallery(snap.val() || {});
     });
+    
+    // Siapkan Daftar DM di Chat
+    renderChatSidebar();
 }
 
 function logout() {
@@ -172,11 +171,8 @@ function logout() {
     document.getElementById('username-input').value = '';
     document.getElementById('password-input').value = '';
     changePage('page-login');
-    
-    // Pastikan menu melayang tertutup saat logout
     document.getElementById('floating-menu').classList.remove('open');
     document.getElementById('hamburger-btn').classList.remove('open');
-    
     showToast("Berhasil logout.");
 }
 
@@ -185,16 +181,12 @@ function renderMemberList(statusData) {
     if (!listContainer) return;
     listContainer.innerHTML = '';
 
-    // BONUS: Ambil data avatar semua user untuk ditampilkan di list
     db.ref('biodata').once('value', (bioSnap) => {
         const allBios = bioSnap.val() || {};
-
         for (let key in CIRCLE_USERS) {
             let member = CIRCLE_USERS[key];
             let isAdmin = member.role === 'admin';
             let isOnline = (statusData[key] === 'online');
-            
-            // Cek avatar di database, kalau belum ada kasih avatar default sesuai namanya
             let avatarImg = (allBios[key] && allBios[key].avatar) ? allBios[key].avatar : "https://api.dicebear.com/7.x/adventurer/svg?seed=" + member.name;
 
             listContainer.innerHTML += `
@@ -223,33 +215,48 @@ function saveBiodata(e) {
         age: document.getElementById('bio-age').value,
         birthday: document.getElementById('bio-birthday').value,
         school: document.getElementById('bio-school').value,
-        avatar: document.getElementById('bio-avatar').value // Simpan URL Avatar
+        avatar: document.getElementById('bio-avatar').value
     };
     db.ref('biodata/' + activeUserKey).set(bioData).then(() => {
         showToast("Biodata & Avatar berhasil disimpan ke Cloud!");
-        // Refresh UI list member agar avatar langsung berubah
         db.ref('status').once('value').then(snap => renderMemberList(snap.val() || {}));
+        renderChatSidebar(); // Refresh avatar di DM
     });
 }
 
+// FITUR AUTO-COMPRESS GAMBAR (Biar File Gede Jadi Ringan)
 function handleImageUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
 
-    if(file.size > 2000000) {
-        alert("Ukuran foto maksimal 2MB ya, biar server nggak jebol!");
-        return;
-    }
+    showToast("Sedang memproses dan kompresi foto...");
 
     const reader = new FileReader();
     reader.onload = function(event) {
-        const base64Image = event.target.result;
-        db.ref('memories').push({
-            imgSrc: base64Image,
-            uploader: CIRCLE_USERS[activeUserKey].name,
-            timestamp: Date.now()
-        });
-        showToast("Foto sedang di-upload ke server...");
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = function() {
+            // Proses Kompresi Pakai Canvas
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 800; // Resolusi aman max 800px
+            const scaleSize = MAX_WIDTH / img.width;
+            
+            canvas.width = MAX_WIDTH;
+            canvas.height = img.height * scaleSize;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // Konversi jadi JPEG ukuran kecil (Kualitas 70%)
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+
+            db.ref('memories').push({
+                imgSrc: compressedBase64,
+                uploader: CIRCLE_USERS[activeUserKey].name,
+                timestamp: Date.now()
+            });
+            showToast("Foto berhasil di-upload ke server!");
+        }
     };
     reader.readAsDataURL(file);
 }
@@ -276,10 +283,117 @@ function renderMemoryGallery(memoriesObj) {
 }
 
 function deleteMemory(memoryKey) {
-    if(confirm("Yakin ingin menghapus foto ini dari server? (Akan hilang untuk semua orang)")) {
+    if(confirm("Yakin ingin menghapus foto ini dari server?")) {
         db.ref('memories/' + memoryKey).remove();
         showToast("Foto berhasil dihapus.");
     }
+}
+
+// ================= SISTEM CHAT ROOM =================
+function renderChatSidebar() {
+    const dmContainer = document.getElementById('dm-list-container');
+    dmContainer.innerHTML = '';
+    
+    db.ref('biodata').once('value', (bioSnap) => {
+        const allBios = bioSnap.val() || {};
+        
+        for (let key in CIRCLE_USERS) {
+            if (key === activeUserKey) continue; // Jangan munculkan diri sendiri
+            
+            let member = CIRCLE_USERS[key];
+            let avatarImg = (allBios[key] && allBios[key].avatar) ? allBios[key].avatar : "https://api.dicebear.com/7.x/adventurer/svg?seed=" + member.name;
+            
+            dmContainer.innerHTML += `
+                <div class="chat-tab" id="tab-${key}" onclick="openChatRoom('${key}')">
+                    <img src="${avatarImg}" alt="avatar">
+                    <span>${member.name}</span>
+                </div>
+            `;
+        }
+    });
+}
+
+function openChatRoom(targetMode) {
+    currentChatMode = targetMode;
+    
+    // Hapus class active di semua tab
+    document.querySelectorAll('.chat-tab').forEach(el => el.classList.remove('active'));
+    document.getElementById(`tab-${targetMode}`).classList.add('active');
+    
+    // Ubah Judul Header
+    const headerTitle = document.getElementById('chat-header-title');
+    if(targetMode === 'public') {
+        headerTitle.innerHTML = '🌍 Public Group';
+    } else {
+        headerTitle.innerHTML = `🔒 Private Chat - ${CIRCLE_USERS[targetMode].name}`;
+    }
+
+    // Tentukan Jalur Database (Public vs Private)
+    let chatPath = 'chats/public';
+    if(targetMode !== 'public') {
+        // Buat ID unik antara 2 orang (Diurutkan abjad agar chatroom-nya sama 2 arah)
+        const roomKey = [activeUserKey, targetMode].sort().join('_');
+        chatPath = 'chats/private/' + roomKey;
+    }
+
+    // Matikan listener sebelumnya supaya gak nyangkut
+    if(chatListenerRef) chatListenerRef.off();
+
+    const box = document.getElementById('chat-messages-box');
+    box.innerHTML = '<i>Memuat pesan...</i>';
+
+    chatListenerRef = db.ref(chatPath);
+    chatListenerRef.on('value', (snap) => {
+        box.innerHTML = '';
+        const data = snap.val();
+        if(!data) {
+            box.innerHTML = '<p style="color:#aaa; text-align:center;">Belum ada pesan. Mulai obrolan!</p>';
+            return;
+        }
+
+        // Render Balon Chat
+        Object.keys(data).forEach(key => {
+            const msg = data[key];
+            const isMe = (msg.sender === activeUserKey);
+            const senderName = CIRCLE_USERS[msg.sender].name;
+            
+            // Format waktu simple HH:MM
+            const timeStr = new Date(msg.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+            box.innerHTML += `
+                <div class="chat-bubble ${isMe ? 'me' : 'other'}">
+                    <div class="chat-info">
+                        ${isMe ? `<span>${timeStr}</span><strong>You</strong>` : `<strong>${senderName}</strong><span>${timeStr}</span>`}
+                    </div>
+                    <div class="chat-text">${msg.text}</div>
+                </div>
+            `;
+        });
+        
+        // Auto scroll ke bawah tiap ada pesan baru
+        box.scrollTop = box.scrollHeight;
+    });
+}
+
+function sendChatMessage(e) {
+    e.preventDefault();
+    const inputEl = document.getElementById('chat-input-text');
+    const text = inputEl.value.trim();
+    if(!text) return;
+
+    let chatPath = 'chats/public';
+    if(currentChatMode !== 'public') {
+        const roomKey = [activeUserKey, currentChatMode].sort().join('_');
+        chatPath = 'chats/private/' + roomKey;
+    }
+
+    db.ref(chatPath).push({
+        sender: activeUserKey,
+        text: text,
+        time: Date.now()
+    });
+
+    inputEl.value = '';
 }
 
 // ================= QUIZ & EMAILJS =================
@@ -300,12 +414,11 @@ function submitQuiz(e) {
     };
 
     emailjs.send('service_bt4m9wa', 'template_iez197j', templateParams)
-        .then(function(response) {
-            showToast("Mantap! Laporan Quiz berhasil dikirim ke server Email.");
+        .then(function() {
+            showToast("Laporan Quiz dikirim ke server Email.");
             document.getElementById('quiz-form').reset();
         }, function(error) {
             showToast("Koneksi gagal mengirim email.");
-            console.log('FAILED...', error);
         });
 }
 
