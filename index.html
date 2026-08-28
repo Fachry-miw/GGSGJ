@@ -7,7 +7,7 @@
     <!-- Google Fonts Modern -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     
-    <!-- FontAwesome untuk Logo Menu Bulat -->
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="stylesheet" href="style.css">
@@ -92,7 +92,6 @@
         </div>
 
         <main class="app-content">
-            <!-- Panel History -->
             <section id="panel-history" class="content-panel active-panel">
                 <h2 class="panel-heading title-font">Our History</h2>
                 <div class="history-box">
@@ -100,13 +99,11 @@
                 </div>
             </section>
 
-            <!-- Panel Members -->
             <section id="panel-members" class="content-panel">
                 <h2 class="panel-heading title-font">Circle Members</h2>
                 <div class="members-grid" id="members-list-container"></div>
             </section>
 
-            <!-- Panel Memory -->
             <section id="panel-memory" class="content-panel">
                 <h2 class="panel-heading title-font">Our Memories</h2>
                 <div class="memory-actions">
@@ -116,7 +113,6 @@
                 <div class="memory-gallery" id="memory-gallery-container"></div>
             </section>
 
-            <!-- Panel Biodata -->
             <section id="panel-biodata" class="content-panel">
                 <h2 class="panel-heading title-font">Biodata & Avatar</h2>
                 <div class="biodata-form-box">
@@ -155,7 +151,6 @@
                 </div>
             </section>
 
-            <!-- Panel Quiz -->
             <section id="panel-quiz" class="content-panel">
                 <h2 class="panel-heading title-font">GGSGJ Circle Quiz</h2>
                 <div class="quiz-container">
@@ -179,7 +174,7 @@
         </main>
     </div>
 
-    <!-- HALAMAN 4 BARU: FULLSCREEN CHAT ROOM -->
+    <!-- HALAMAN 4: FULLSCREEN CHAT ROOM -->
     <div id="page-chat" class="page">
         <header class="app-header">
             <div style="display: flex; align-items: baseline; gap: 12px;">
@@ -192,22 +187,28 @@
         </header>
 
         <div class="chat-fullscreen-wrapper">
-            <!-- Sidebar Chat (Daftar Teman) -->
+            <!-- Sidebar Chat (Daftar Teman + Dropdown) -->
             <div class="chat-sidebar-list">
                 <div class="chat-tab active" id="tab-public" onclick="openChatRoom('public')">
-                    <i class="fa-solid fa-globe" style="font-size: 1.5rem; margin-right: 5px;"></i> Public
+                    <i class="fa-solid fa-globe" style="font-size: 1.2rem; margin-right: 5px;"></i> Public Group
                 </div>
-                <hr class="chat-divider">
-                <p class="chat-dm-label">DIRECT MESSAGES</p>
-                <div id="dm-list-container"></div>
+                
+                <!-- TOMBOL PANAH DROPDOWN KHUSUS MOBILE / DESKTOP -->
+                <div class="chat-dropdown-container">
+                    <button class="chat-dropdown-btn" onclick="toggleChatDropdown(event)">
+                        <span>Pilih Anggota (DM)</span>
+                        <i class="fa-solid fa-chevron-down" id="dropdown-arrow-icon"></i>
+                    </button>
+                    <div class="chat-dropdown-content" id="dm-list-container">
+                        <!-- Daftar nama anggota masuk ke sini secara vertikal -->
+                    </div>
+                </div>
             </div>
             
             <!-- Area Obrolan -->
             <div class="chat-main-area">
                 <div class="chat-header-title" id="chat-header-title">🌍 Public Group</div>
-                <div class="chat-messages-box" id="chat-messages-box">
-                    <!-- Pesan muncul di sini -->
-                </div>
+                <div class="chat-messages-box" id="chat-messages-box"></div>
                 <form class="chat-input-form" onsubmit="sendChatMessage(event)">
                     <input type="text" id="chat-input-text" placeholder="Ketik pesan..." autocomplete="off" required>
                     <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
