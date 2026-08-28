@@ -138,21 +138,26 @@ body {
 .save-biodata-btn { background-color: var(--color-camel); color: var(--color-choc); font-weight: 600; width: 100%; padding: 1rem; border: none; border-radius: 10px; cursor: pointer; font-size: 1.1rem; transition: 0.3s; margin-top: 1rem; }
 
 /* ==========================================================
-   HALAMAN BARU: FULL-SCREEN CHAT ROOM
+   HALAMAN BARU: FULL-SCREEN CHAT ROOM + DROPDOWN PANAH
    ========================================================== */
 .chat-header-subtitle { font-family: 'Outfit', sans-serif; font-size: 1.3rem; color: var(--color-camel); font-style: italic; letter-spacing: 1.5px; margin-left: 5px; opacity: 0.95; }
 .back-btn { background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; gap: 8px; transition: 0.3s; font-weight: 600; border: 1px solid var(--color-glass-border); }
 .back-btn:hover { background: #ff5e5e; border-color: #ff5e5e; }
 
-.chat-fullscreen-wrapper { display: flex; margin-top: 75px; width: 100%; height: calc(100vh - 75px); background: rgba(5, 11, 20, 0.7); backdrop-filter: blur(15px); }
+.chat-fullscreen-wrapper { display: flex; margin-top: 75px; width: 100%; height: calc(100vh - 75px); background: rgba(5, 11, 20, 0.7); backdrop-filter: blur(15px); position: relative; }
 
-.chat-sidebar-list { width: 300px; background: rgba(0,0,0,0.4); padding: 20px; overflow-y: auto; border-right: 1px solid var(--color-glass-border); }
+.chat-sidebar-list { width: 280px; background: rgba(0,0,0,0.4); padding: 20px; overflow-y: auto; border-right: 1px solid var(--color-glass-border); }
 .chat-tab { padding: 12px 15px; margin-bottom: 8px; border-radius: 10px; cursor: pointer; font-weight: 500; font-size: 1rem; color: #ccc; transition: 0.2s; display: flex; align-items: center; gap: 10px; border: 1px solid transparent; }
 .chat-tab:hover { background: rgba(255,255,255,0.1); color: white; border-color: rgba(255,255,255,0.2); }
 .chat-tab.active { background: var(--color-blue); color: white; font-weight: 600; box-shadow: 0 5px 15px rgba(58, 134, 239, 0.4); border-color: var(--color-blue); }
-.chat-tab img { width: 35px; height: 35px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); }
-.chat-divider { border-color: rgba(255,255,255,0.1); margin: 15px 0; }
-.chat-dm-label { font-size: 0.8rem; color: #aaa; margin-bottom: 10px; font-weight: 600; letter-spacing: 1px; }
+.chat-tab img { width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); }
+
+/* STYLE DROPDOWN PANAH KECIL */
+.chat-dropdown-container { position: relative; margin-top: 15px; }
+.chat-dropdown-btn { width: 100%; padding: 12px 15px; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--color-glass-border); border-radius: 10px; color: white; font-weight: 600; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; }
+.chat-dropdown-btn:hover { background: rgba(255, 255, 255, 0.15); border-color: var(--color-camel); }
+.chat-dropdown-content { display: none; flex-direction: column; gap: 5px; margin-top: 8px; background: rgba(0, 0, 0, 0.6); padding: 8px; border-radius: 10px; border: 1px solid var(--color-glass-border); }
+.chat-dropdown-content.show { display: flex; }
 
 .chat-main-area { flex: 1; display: flex; flex-direction: column; }
 .chat-header-title { padding: 20px 30px; font-weight: 600; font-size: 1.3rem; border-bottom: 1px solid var(--color-glass-border); background: rgba(0,0,0,0.2); }
@@ -175,29 +180,17 @@ body {
 #toast { visibility: hidden; min-width: 250px; background-color: var(--color-blue); color: var(--color-white); text-align: center; border-radius: 8px; padding: 14px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: 600; box-shadow: 0 5px 20px rgba(0,0,0,0.4); }
 #toast.show { visibility: visible; animation: fadein 0.4s, fadeout 0.4s 2.6s; }
 
-/* Tampilan Khusus Mobile untuk Full-Screen Chat */
 @media(max-width: 768px) {
     .index-title-main { font-size: 4rem; }
     .chat-fullscreen-wrapper { flex-direction: column; }
     
-    /* Panel DM di HP jadi memanjang ke samping (Horizontal Scroll) */
-    .chat-sidebar-list { 
-        width: 100%; height: 85px; padding: 10px; 
-        display: flex; flex-direction: row; align-items: center; 
-        overflow-x: auto; overflow-y: hidden; border-right: none; 
-        border-bottom: 1px solid var(--color-glass-border); 
-    }
-    .chat-divider, .chat-dm-label { display: none; }
-    
-    #dm-list-container { display: flex; flex-direction: row; gap: 10px; }
-    
-    .chat-tab { margin-bottom: 0; margin-right: 10px; white-space: nowrap; padding: 8px 15px; }
-    .chat-tab img { width: 28px; height: 28px; }
+    /* Di HP, sidebar chat jadi kotak ringkas di atas dengan dropdown anggota */
+    .chat-sidebar-list { width: 100%; height: auto; padding: 12px 15px; border-right: none; border-bottom: 1px solid var(--color-glass-border); display: flex; flex-direction: column; gap: 8px; }
+    .chat-tab { margin-bottom: 0; padding: 10px 15px; }
+    .chat-dropdown-container { margin-top: 0; }
     
     .chat-header-title { padding: 15px 20px; font-size: 1.1rem; }
     .chat-messages-box { padding: 15px 20px; }
     .chat-input-form { padding: 15px 20px; }
-    
-    /* Menyembunyikan kata "Kembali" di HP agar tidak sempit, cuma logo Panah aja */
     .back-btn span { display: none; }
 }
