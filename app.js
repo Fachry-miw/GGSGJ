@@ -30,7 +30,6 @@ let activeUserKey = localStorage.getItem('ggsgj_logged_user') || null;
 let currentSessionId = localStorage.getItem('ggsgj_session_id') || (Date.now().toString() + Math.random().toString(36).substr(2, 5));
 localStorage.setItem('ggsgj_session_id', currentSessionId);
 
-// VARIABEL UNTUK CHAT
 let currentChatMode = 'public'; 
 let chatListenerRef = null;
 
@@ -74,12 +73,11 @@ function toggleSidebar() {
 }
 
 function switchPanel(panelName, el) {
-    // Kalau yang diklik adalah chat, maka buka halaman full-screen chat
     if(panelName === 'chat') {
         toggleSidebar(); 
         changePage('page-chat');
         openChatRoom('public');
-        return; // Hentikan fungsi panel normal
+        return; 
     }
 
     document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active-panel'));
@@ -89,7 +87,6 @@ function switchPanel(panelName, el) {
     toggleSidebar();
 }
 
-// Fungsi untuk tombol kembali dari chat
 function closeChatPage() {
     changePage('page-main');
 }
@@ -166,7 +163,6 @@ function setupFirebaseRealtime() {
         renderMemoryGallery(snap.val() || {});
     });
     
-    // Siapkan Daftar DM di Chat
     renderChatSidebar();
 }
 
@@ -295,7 +291,7 @@ function deleteMemory(memoryKey) {
     }
 }
 
-// ================= SISTEM CHAT ROOM =================
+// ================= SISTEM CHAT ROOM & DROPDOWN =================
 function renderChatSidebar() {
     const dmContainer = document.getElementById('dm-list-container');
     dmContainer.innerHTML = '';
@@ -318,6 +314,28 @@ function renderChatSidebar() {
         }
     });
 }
+
+function toggleChatDropdown(e) {
+    e.stopPropagation();
+    const content = document.getElementById('dm-list-container');
+    const icon = document.getElementById('dropdown-arrow-icon');
+    content.classList.toggle('show');
+    icon.classList.toggle('fa-chevron-up');
+    icon.classList.toggle('fa-chevron-down');
+}
+
+// Tutup dropdown jika klik di luar area dropdown
+window.addEventListener('click', () => {
+    const content = document.getElementById('dm-list-container');
+    const icon = document.getElementById('dropdown-arrow-icon');
+    if (content && content.classList.contains('show')) {
+        content.classList.remove('show');
+        if (icon) {
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+        }
+    }
+});
 
 function openChatRoom(targetMode) {
     currentChatMode = targetMode;
