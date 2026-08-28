@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GGSGJ - Forever Until End of World</title>
     <!-- Google Fonts Modern -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     
     <!-- FontAwesome untuk Logo Menu Bulat -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -31,13 +31,14 @@
     
     <div id="toast">Notifikasi GGSGJ</div>
 
-    <!-- HALAMAN 1 & 2 (Welcome & Login) -->
+    <!-- HALAMAN 1: Welcome -->
     <div id="page-index" class="page active">
         <h1 class="index-title-main title-font">GGSGJ</h1>
         <p class="index-subtitle-main subtitle-font">Forever until end of world</p>
         <button class="bubble-btn" onclick="triggerBubble(this)">Let's start</button>
     </div>
 
+    <!-- HALAMAN 2: Login -->
     <div id="page-login" class="page">
         <div class="login-card">
             <h1 class="title-font">GGSGJ</h1>
@@ -65,7 +66,7 @@
             </div>
         </header>
 
-        <!-- MENU MELAYANG (Tambah 1 Tombol Chat) -->
+        <!-- MENU MELAYANG 7 TOMBOL -->
         <div class="floating-circle-menu" id="floating-menu">
             <div class="circle-btn" onclick="switchPanel('history', this)" title="History">
                 <i class="fa-solid fa-road"></i>
@@ -83,7 +84,7 @@
                 <i class="fa-solid fa-gamepad"></i>
             </div>
             <div class="circle-btn" onclick="switchPanel('chat', this)" title="Chat Room">
-                <i class="fa-solid fa-comments"></i> <!-- ICON CHAT BARU -->
+                <i class="fa-solid fa-comments"></i> 
             </div>
             <div class="circle-btn btn-logout" onclick="logout()" title="Logout">
                 <i class="fa-solid fa-right-from-bracket"></i>
@@ -175,36 +176,44 @@
                     </form>
                 </div>
             </section>
-
-            <!-- PANEL BARU: CHAT ROOM DISCORD STYLE -->
-            <section id="panel-chat" class="content-panel">
-                <h2 class="panel-heading title-font">Chat Room</h2>
-                <div class="chat-wrapper">
-                    <!-- Sidebar Chat (Daftar Teman) -->
-                    <div class="chat-sidebar-list">
-                        <div class="chat-tab active" id="tab-public" onclick="openChatRoom('public')">
-                            <i class="fa-solid fa-globe"></i> Public Group
-                        </div>
-                        <hr style="border-color: rgba(255,255,255,0.1); margin: 10px 0;">
-                        <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 5px;">DIRECT MESSAGES</p>
-                        <div id="dm-list-container"></div>
-                    </div>
-                    
-                    <!-- Area Obrolan -->
-                    <div class="chat-main-area">
-                        <div class="chat-header-title" id="chat-header-title">🌍 Public Group</div>
-                        <div class="chat-messages-box" id="chat-messages-box">
-                            <!-- Pesan muncul di sini -->
-                        </div>
-                        <form class="chat-input-form" onsubmit="sendChatMessage(event)">
-                            <input type="text" id="chat-input-text" placeholder="Ketik pesan..." autocomplete="off" required>
-                            <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
-                        </form>
-                    </div>
-                </div>
-            </section>
-
         </main>
+    </div>
+
+    <!-- HALAMAN 4 BARU: FULLSCREEN CHAT ROOM -->
+    <div id="page-chat" class="page">
+        <header class="app-header">
+            <div style="display: flex; align-items: baseline; gap: 12px;">
+                <h2 class="header-title title-font">GGSGJ</h2>
+                <span class="chat-header-subtitle">Chat Room</span>
+            </div>
+            <div class="back-btn" onclick="closeChatPage()">
+                <i class="fa-solid fa-arrow-left"></i> <span>Kembali</span>
+            </div>
+        </header>
+
+        <div class="chat-fullscreen-wrapper">
+            <!-- Sidebar Chat (Daftar Teman) -->
+            <div class="chat-sidebar-list">
+                <div class="chat-tab active" id="tab-public" onclick="openChatRoom('public')">
+                    <i class="fa-solid fa-globe" style="font-size: 1.5rem; margin-right: 5px;"></i> Public
+                </div>
+                <hr class="chat-divider">
+                <p class="chat-dm-label">DIRECT MESSAGES</p>
+                <div id="dm-list-container"></div>
+            </div>
+            
+            <!-- Area Obrolan -->
+            <div class="chat-main-area">
+                <div class="chat-header-title" id="chat-header-title">🌍 Public Group</div>
+                <div class="chat-messages-box" id="chat-messages-box">
+                    <!-- Pesan muncul di sini -->
+                </div>
+                <form class="chat-input-form" onsubmit="sendChatMessage(event)">
+                    <input type="text" id="chat-input-text" placeholder="Ketik pesan..." autocomplete="off" required>
+                    <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script src="app.js"></script>
