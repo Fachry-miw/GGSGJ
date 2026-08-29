@@ -97,7 +97,6 @@ function closeChatPage() {
     changePage('page-main');
 }
 
-// FUNGSI UPDATE UNTUK MEMBACA LOCAL IMAGE PATH (ava1.jpg dll)
 function selectAvatar(el, imagePath) {
     document.querySelectorAll('.avatar-option').forEach(img => img.classList.remove('selected'));
     el.classList.add('selected');
@@ -196,16 +195,17 @@ function logout() {
 function renderMemberList(statusData) {
     const listContainer = document.getElementById('members-list-container');
     if (!listContainer) return;
-    listContainer.innerHTML = '';
 
     db.ref('biodata').once('value', (bioSnap) => {
+        // PERBAIKAN: Pembersih daftar dipindah ke dalam sini agar tidak tercetak ganda
+        listContainer.innerHTML = ''; 
+        
         const allBios = bioSnap.val() || {};
         for (let key in CIRCLE_USERS) {
             let member = CIRCLE_USERS[key];
             let isAdmin = member.role === 'admin';
             let isOnline = (statusData[key] === 'online');
             
-            // Backup avatar default kalau belum pilih karya Alif
             let avatarImg = (allBios[key] && allBios[key].avatar) ? allBios[key].avatar : "https://api.dicebear.com/7.x/adventurer/svg?seed=" + member.name;
 
             listContainer.innerHTML += `
@@ -437,9 +437,12 @@ function deleteMemory(memoryKey) {
 // ================= SISTEM CHAT ROOM & DROPDOWN =================
 function renderChatSidebar() {
     const dmContainer = document.getElementById('dm-list-container');
-    dmContainer.innerHTML = '';
+    if(!dmContainer) return;
     
     db.ref('biodata').once('value', (bioSnap) => {
+        // PERBAIKAN: Pembersih daftar DM juga dipindah ke sini
+        dmContainer.innerHTML = ''; 
+        
         const allBios = bioSnap.val() || {};
         
         for (let key in CIRCLE_USERS) {
