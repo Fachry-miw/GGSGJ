@@ -92,7 +92,7 @@
         </div>
 
         <main class="app-content">
-            <!-- PANEL HISTORY (Dengan Kalimat Keramat) -->
+            <!-- PANEL HISTORY -->
             <section id="panel-history" class="content-panel active-panel">
                 <h2 class="panel-heading title-font">Our History</h2>
                 <div class="history-box">
@@ -121,23 +121,43 @@
                 <div class="memory-gallery" id="memory-gallery-container"></div>
             </section>
 
-            <!-- PANEL BIODATA -->
+            <!-- PANEL BIODATA (Update 25 Avatar Alif) -->
             <section id="panel-biodata" class="content-panel">
                 <h2 class="panel-heading title-font">Biodata & Avatar</h2>
                 <div class="biodata-form-box">
                     <p>Halo, <span id="current-user-greeting" style="font-weight: bold; color: var(--color-camel);"></span>!</p>
                     <form onsubmit="saveBiodata(event)">
                         <div class="form-group">
-                            <label>Pilih Avatar Karaktermu</label>
+                            <label>Pilih Avatar Karakter (Karya Alif)</label>
                             <div class="avatar-grid">
-                                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Felix" class="avatar-option" onclick="selectAvatar(this, 'Felix')">
-                                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Aneka" class="avatar-option" onclick="selectAvatar(this, 'Aneka')">
-                                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Bandit" class="avatar-option" onclick="selectAvatar(this, 'Bandit')">
-                                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Caleb" class="avatar-option" onclick="selectAvatar(this, 'Caleb')">
-                                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Destiny" class="avatar-option" onclick="selectAvatar(this, 'Destiny')">
-                                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jasper" class="avatar-option" onclick="selectAvatar(this, 'Jasper')">
+                                <!-- 25 Avatar -->
+                                <img src="ava1.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava1.jpg')">
+                                <img src="ava2.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava2.jpg')">
+                                <img src="ava3.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava3.jpg')">
+                                <img src="ava4.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava4.jpg')">
+                                <img src="ava5.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava5.jpg')">
+                                <img src="ava6.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava6.jpg')">
+                                <img src="ava7.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava7.jpg')">
+                                <img src="ava8.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava8.jpg')">
+                                <img src="ava9.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava9.jpg')">
+                                <img src="ava10.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava10.jpg')">
+                                <img src="ava11.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava11.jpg')">
+                                <img src="ava12.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava12.jpg')">
+                                <img src="ava13.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava13.jpg')">
+                                <img src="ava14.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava14.jpg')">
+                                <img src="ava15.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava15.jpg')">
+                                <img src="ava16.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava16.jpg')">
+                                <img src="ava17.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava17.jpg')">
+                                <img src="ava18.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava18.jpg')">
+                                <img src="ava19.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava19.jpg')">
+                                <img src="ava20.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava20.jpg')">
+                                <img src="ava21.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava21.jpg')">
+                                <img src="ava22.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava22.jpg')">
+                                <img src="ava23.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava23.jpg')">
+                                <img src="ava24.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava24.jpg')">
+                                <img src="ava25.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava25.jpg')">
                             </div>
-                            <input type="hidden" id="bio-avatar" value="https://api.dicebear.com/7.x/adventurer/svg?seed=Felix">
+                            <input type="hidden" id="bio-avatar" value="ava1.jpg">
                         </div>
                         <div class="form-group">
                             <label>Nama Lengkap</label>
@@ -160,7 +180,7 @@
                 </div>
             </section>
 
-            <!-- PANEL QUIZ (Update 5 Pertanyaan) -->
+            <!-- PANEL QUIZ -->
             <section id="panel-quiz" class="content-panel">
                 <h2 class="panel-heading title-font">GGSGJ Circle Quiz</h2>
                 <div class="quiz-container">
@@ -211,14 +231,12 @@
                     <i class="fa-solid fa-globe" style="font-size: 1.2rem; margin-right: 5px;"></i> Public Group
                 </div>
                 
-                <!-- TOMBOL PANAH DROPDOWN KHUSUS MOBILE / DESKTOP -->
                 <div class="chat-dropdown-container">
                     <button class="chat-dropdown-btn" onclick="toggleChatDropdown(event)">
                         <span>Pilih Anggota (DM)</span>
                         <i class="fa-solid fa-chevron-down" id="dropdown-arrow-icon"></i>
                     </button>
                     <div class="chat-dropdown-content" id="dm-list-container">
-                        <!-- Daftar nama anggota masuk ke sini secara vertikal -->
                     </div>
                 </div>
             </div>
