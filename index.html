@@ -23,8 +23,12 @@
     <!-- FIREBASE SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <!-- COMPILER PYTHON (BRYTHON) -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.12.0/brython.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.12.0/brython_stdlib.min.js"></script>
 </head>
-<body>
+<body onload="brython()">
 
     <div class="bg-photo-overlay"></div>
     <canvas id="bg-canvas"></canvas>
@@ -66,7 +70,7 @@
             </div>
         </header>
 
-        <!-- MENU MELAYANG 8 TOMBOL -->
+        <!-- MENU MELAYANG 9 TOMBOL -->
         <div class="floating-circle-menu" id="floating-menu">
             <div class="circle-btn" onclick="switchPanel('history', this)" title="History">
                 <i class="fa-solid fa-road"></i>
@@ -86,9 +90,12 @@
             <div class="circle-btn" onclick="switchPanel('chat', this)" title="Chat Room">
                 <i class="fa-solid fa-comments"></i> 
             </div>
-            <!-- TOMBOL BARU: ARCADE GAME -->
             <div class="circle-btn" onclick="switchPanel('arcade', this)" title="GGSGJ Arcade">
                 <i class="fa-solid fa-rocket"></i>
+            </div>
+            <!-- TOMBOL BARU: PYTHON TERMINAL -->
+            <div class="circle-btn" onclick="switchPanel('python', this)" title="Python Predictor">
+                <i class="fa-brands fa-python"></i>
             </div>
             <div class="circle-btn btn-logout" onclick="logout()" title="Logout">
                 <i class="fa-solid fa-right-from-bracket"></i>
@@ -104,9 +111,7 @@
                 </div>
 
                 <h3 class="subtitle-font" style="color: var(--color-camel); margin-top: 3.5rem; margin-bottom: 1.5rem; text-align: center; font-weight: 600; font-size: 1.8rem;">Kalimat Keramat Our Member</h3>
-                <div id="keramat-container" class="keramat-container">
-                    <!-- Bubble digenerate oleh JavaScript -->
-                </div>
+                <div id="keramat-container" class="keramat-container"></div>
             </section>
 
             <!-- PANEL MEMBERS -->
@@ -213,7 +218,7 @@
                 </div>
             </section>
 
-            <!-- PANEL BARU: GGSGJ ARCADE GAME -->
+            <!-- PANEL ARCADE GAME -->
             <section id="panel-arcade" class="content-panel">
                 <h2 class="panel-heading title-font">GGSGJ Arcade (Flappy Circle)</h2>
                 <div class="arcade-wrapper">
@@ -232,19 +237,72 @@
                             <button class="upload-btn" onclick="resetGameEngine()" style="margin-top: 10px;">Main Lagi</button>
                         </div>
                         
-                        <!-- Skor live pas main -->
                         <div id="game-live-score" style="display: none;">0</div>
                     </div>
 
-                    <!-- LEADERBOARD REAL-TIME FIREBASE -->
                     <div class="leaderboard-area">
                         <h3 style="color: var(--color-camel); border-bottom: 1px solid var(--color-glass-border); padding-bottom: 10px; margin-bottom: 15px;">🏆 Top Global Score</h3>
                         <div id="arcade-leaderboard-list">
-                            <!-- List di-generate JS -->
                             <p style="color: gray; font-style: italic;">Memuat data skor...</p>
                         </div>
                     </div>
                 </div>
+            </section>
+
+            <!-- PANEL BARU: PYTHON TERMINAL -->
+            <section id="panel-python" class="content-panel">
+                <h2 class="panel-heading title-font">Python AI Predictor</h2>
+                <div class="python-wrapper">
+                    <p style="margin-bottom:15px; color:#aaa; font-size: 0.9rem;">
+                        Sistem ini murni ditulis menggunakan bahasa <span style="color:#F4D35E; font-weight:bold;">Python</span> di dalam Website untuk memprediksi Khodam & Masa Depan anggota GGSGJ.
+                    </p>
+                    <div class="form-group">
+                        <input type="text" id="py-input" placeholder="Ketik nama target operasi..." autocomplete="off">
+                        <button id="py-btn" class="upload-btn" style="margin-top:10px; width:100%;"><i class="fa-brands fa-python"></i> Mulai Analisis Python</button>
+                    </div>
+                    <div id="py-output" class="terminal-output">root@ggsgj-server:~# Sistem Python Ready. Menunggu input...</div>
+                </div>
+                
+                <!-- INI ADALAH KODE PYTHON ASLI YANG BERJALAN DI BROWSER -->
+                <script type="text/python">
+                    from browser import document, timer
+                    import random
+
+                    khodams = ["Macan Putih", "Sapu Lidi", "Kipas Angin Kosmos", "Naga Sakti", "Lele Terbang", "Kecoa Ngesot", "Panci Gosong", "Genderuwo Sigma", "Kucing Oyen", "Raja Iblis", "Knalpot Mio", "Kalkulator Rusak"]
+
+                    def jalankan_prediksi(ev):
+                        nama = document["py-input"].value.strip()
+                        if not nama:
+                            document["py-output"].text = "root@ggsgj-server:~# Error: Nama target tidak boleh kosong!"
+                            return
+                        
+                        document["py-output"].text = "root@ggsgj-server:~# Menghubungkan ke satelit...\nroot@ggsgj-server:~# Memproses algoritma AI Python..."
+                        
+                        def tampilkan_hasil():
+                            k = random.choice(khodams)
+                            bucin = random.randint(10, 100)
+                            gila = random.randint(50, 100)
+                            
+                            hasil = f"=== HASIL ANALISIS PYTHON: {nama.upper()} ===\n\n"
+                            hasil += f"[+] Khodam Pendamping : {k}\n"
+                            hasil += f"[+] Tingkat Kebucinan : {bucin}%\n"
+                            hasil += f"[+] Tingkat Kegilaan  : {gila}%\n"
+                            
+                            if bucin > 80:
+                                hasil += "\nWARNING: Orang ini butuh dirukiyah asmara!"
+                            elif gila > 90:
+                                hasil += "\nWARNING: Orang ini sangat berbahaya di real life!"
+                            else:
+                                hasil += "\nSTATUS: Terpantau masih normal (agak meragukan)."
+                            
+                            document["py-output"].text = hasil
+                        
+                        # Animasi delay loading bohong-bohongan ala hacker (1.5 detik)
+                        timer.set_timeout(tampilkan_hasil, 1500)
+
+                    # Binding tombol HTML ke fungsi Python
+                    document["py-btn"].bind("click", jalankan_prediksi)
+                </script>
             </section>
 
         </main>
