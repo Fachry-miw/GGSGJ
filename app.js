@@ -32,7 +32,7 @@ localStorage.setItem('ggsgj_session_id', currentSessionId);
 
 let currentChatMode = 'public'; 
 let chatListenerRef = null;
-let keramatInitialized = false; // Flag untuk memastikan bubble hanya dirender sekali
+let keramatInitialized = false; 
 
 // ================= UI & NAVIGATION =================
 function showToast(message) {
@@ -87,7 +87,6 @@ function switchPanel(panelName, el) {
     el.classList.add('active');
     toggleSidebar();
 
-    // Trigger mesin fisika Bubble hanya saat masuk ke History
     if(panelName === 'history' && !keramatInitialized) {
         setTimeout(initKeramatBubbles, 100);
         keramatInitialized = true;
@@ -98,10 +97,11 @@ function closeChatPage() {
     changePage('page-main');
 }
 
-function selectAvatar(el, seedName) {
+// FUNGSI UPDATE UNTUK MEMBACA LOCAL IMAGE PATH (ava1.jpg dll)
+function selectAvatar(el, imagePath) {
     document.querySelectorAll('.avatar-option').forEach(img => img.classList.remove('selected'));
     el.classList.add('selected');
-    document.getElementById('bio-avatar').value = `https://api.dicebear.com/7.x/adventurer/svg?seed=${seedName}`;
+    document.getElementById('bio-avatar').value = imagePath;
 }
 
 // ================= AUTH & REAL-TIME STATUS =================
@@ -172,7 +172,6 @@ function setupFirebaseRealtime() {
     
     renderChatSidebar();
 
-    // Pastikan bubble keramat ter-load kalau panel history yang sedang aktif
     if(!keramatInitialized && document.getElementById('panel-history').classList.contains('active-panel')) {
         setTimeout(initKeramatBubbles, 300);
         keramatInitialized = true;
@@ -205,6 +204,8 @@ function renderMemberList(statusData) {
             let member = CIRCLE_USERS[key];
             let isAdmin = member.role === 'admin';
             let isOnline = (statusData[key] === 'online');
+            
+            // Backup avatar default kalau belum pilih karya Alif
             let avatarImg = (allBios[key] && allBios[key].avatar) ? allBios[key].avatar : "https://api.dicebear.com/7.x/adventurer/svg?seed=" + member.name;
 
             listContainer.innerHTML += `
@@ -261,7 +262,6 @@ function initKeramatBubbles() {
         
         container.appendChild(el);
         
-        // Logika Fisika Posisi
         let rect = container.getBoundingClientRect();
         let bw = el.offsetWidth;
         let bh = el.offsetHeight;
@@ -277,7 +277,6 @@ function initKeramatBubbles() {
         el.style.left = x + 'px';
         el.style.top = y + 'px';
         
-        // Drag and Drop (Support Mouse & Touch di HP)
         let startX, startY, initialX, initialY;
         
         const dragStart = (e) => {
@@ -326,7 +325,6 @@ function initKeramatBubbles() {
         document.addEventListener('touchend', dragEnd);
     });
     
-    // Mesin Animasi (Membentur Tembok)
     function animate() {
         let rect = container.getBoundingClientRect();
         if(rect.width === 0) {
