@@ -160,7 +160,7 @@ function setupFirebaseRealtime() {
         document.getElementById('bio-school').value = savedBio.school || '';
         if(savedBio.avatar) {
             document.getElementById('bio-avatar').value = savedBio.avatar;
-            myAvatarUrl = savedBio.avatar; // Untuk game
+            myAvatarUrl = savedBio.avatar; 
         }
     });
 
@@ -172,9 +172,14 @@ function setupFirebaseRealtime() {
         renderMemoryGallery(snap.val() || {});
     });
     
-    // Load Leaderboard Arcade Data
+    // Perbaikan Bug Papan Skor Loading Terus (Jika Database Masih Kosong)
+    const lbContainer = document.getElementById('arcade-leaderboard-list');
     db.ref('arcade_leaderboard').on('value', (snap) => {
-        renderLeaderboard(snap.val() || {});
+        if(!snap.exists()) {
+            lbContainer.innerHTML = '<p style="color:gray; font-style:italic;">Belum ada satupun yang main. Mainkan game 1 kali untuk membuka papan skor!</p>';
+        } else {
+            renderLeaderboard(snap.val());
+        }
     });
 
     renderChatSidebar();
@@ -542,9 +547,7 @@ function submitQuiz(e) {
         }, function(error) { showToast("Koneksi gagal mengirim email."); });
 }
 
-// ================= PARADIGMA BARU: GAME ENGINE JAVASCRIPT (GGSGJ ARCADE) =================
-// Ini adalah sistem pemrosesan rendering frame per-detik layaknya sebuah game engine sungguhan (Unity/Unreal tapi via Canvas 2D)
-
+// ================= GGSGJ ARCADE =================
 const gCanvas = document.getElementById("game-canvas");
 const gCtx = gCanvas.getContext("2d");
 let gameLoopReq;
@@ -554,13 +557,11 @@ let gameScore = 0;
 let myAvatarUrl = "https://api.dicebear.com/7.x/adventurer/svg?seed=Felix"; // Default
 let birdImg = new Image();
 
-// Fisika & Karakter (Bird)
 const bird = {
     x: 50, y: 150, width: 34, height: 34,
     velocity: 0, gravity: 0.25, jumpPower: -4.5,
     draw: function() {
         gCtx.save();
-        // Bikin gambar jadi bulat saat di-render di canvas
         gCtx.beginPath();
         gCtx.arc(this.x + this.width/2, this.y + this.height/2, this.width/2, 0, Math.PI * 2);
         gCtx.closePath();
@@ -568,7 +569,6 @@ const bird = {
         gCtx.drawImage(birdImg, this.x, this.y, this.width, this.height);
         gCtx.restore();
         
-        // Kasih border circle warna emas
         gCtx.beginPath();
         gCtx.arc(this.x + this.width/2, this.y + this.height/2, this.width/2, 0, Math.PI * 2);
         gCtx.lineWidth = 3;
@@ -579,49 +579,40 @@ const bird = {
         this.velocity += this.gravity;
         this.y += this.velocity;
         
-        // Kena lantai
         if(this.y + this.height >= gCanvas.height) {
             this.y = gCanvas.height - this.height;
             gameOverState();
         }
-        // Kena atap
         if(this.y <= 0) {
             this.y = 0;
             this.velocity = 0;
         }
     },
-    flap: function() {
-        this.velocity = this.jumpPower;
-    }
+    flap: function() { this.velocity = this.jumpPower; }
 };
 
-// Rintangan (Pipes)
 const pipes = {
     position: [],
     width: 50,
-    gap: 120, // Lebar celah untuk dilewati
-    dx: 2.5,  // Kecepatan jalan rintangan
-    
+    gap: 120, 
+    dx: 2.5,  
     draw: function() {
         for(let i = 0; i < this.position.length; i++) {
             let p = this.position[i];
             let topYPos = p.y;
             let bottomYPos = p.y + this.gap;
             
-            // Pipa Atas
             gCtx.fillStyle = "#2B1B17";
             gCtx.fillRect(p.x, 0, this.width, topYPos);
             gCtx.lineWidth = 2;
             gCtx.strokeStyle = "#3A86EF";
             gCtx.strokeRect(p.x, 0, this.width, topYPos);
             
-            // Pipa Bawah
             gCtx.fillRect(p.x, bottomYPos, this.width, gCanvas.height - bottomYPos);
             gCtx.strokeRect(p.x, bottomYPos, this.width, gCanvas.height - bottomYPos);
         }
     },
     update: function() {
-        // Generate pipa baru setiap 90 frame
         if(gameFrames % 90 === 0) {
             this.position.push({
                 x: gCanvas.width,
@@ -633,35 +624,26 @@ const pipes = {
             let p = this.position[i];
             let bottomPipeYPos = p.y + this.gap;
             
-            // Logika Tabrakan (Hitbox AABB - Axis-Aligned Bounding Box)
-            if(bird.x + bird.width > p.x && bird.x < p.x + this.width && bird.y < p.y && bird.y + bird.height > 0) { gameOverState(); } // Nabrak Pipa Atas
-            if(bird.x + bird.width > p.x && bird.x < p.x + this.width && bird.y + bird.height > bottomPipeYPos && bird.y < gCanvas.height) { gameOverState(); } // Nabrak Pipa Bawah
+            if(bird.x + bird.width > p.x && bird.x < p.x + this.width && bird.y < p.y && bird.y + bird.height > 0) { gameOverState(); }
+            if(bird.x + bird.width > p.x && bird.x < p.x + this.width && bird.y + bird.height > bottomPipeYPos && bird.y < gCanvas.height) { gameOverState(); }
             
             p.x -= this.dx;
-            
-            // Nambah skor saat berhasil melewati pipa
             if(p.x + this.width === bird.x) {
                 gameScore++;
                 document.getElementById('game-live-score').innerText = gameScore;
             }
-            
-            // Buang memori pipa yang udah kelewat layar
             if(p.x + this.width <= 0) {
                 this.position.shift();
             }
         }
     },
-    reset: function() {
-        this.position = [];
-    }
+    reset: function() { this.position = []; }
 };
 
 function drawGame() {
     gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
-    // Background Langit
     gCtx.fillStyle = "#70c5ce"; 
     gCtx.fillRect(0, 0, gCanvas.width, gCanvas.height);
-    
     pipes.draw();
     bird.draw();
 }
@@ -680,7 +662,7 @@ function gameLoop() {
 }
 
 function startGameEngine() {
-    birdImg.src = myAvatarUrl; // Update avatar saat tombol start ditekan
+    birdImg.src = myAvatarUrl; 
     document.getElementById('game-ui-overlay').style.display = 'none';
     document.getElementById('game-over-overlay').style.display = 'none';
     document.getElementById('game-live-score').style.display = 'block';
@@ -708,9 +690,8 @@ function gameOverState() {
     document.getElementById('game-over-overlay').style.display = 'flex';
     document.getElementById('game-final-score').innerText = gameScore;
     
-    // Kirim High Score ke Firebase
     db.ref('arcade_leaderboard/' + activeUserKey).once('value', snap => {
-        let currentRecord = snap.val() ? snap.val().score : 0;
+        let currentRecord = snap.val() ? snap.val().score : -1;
         if(gameScore > currentRecord) {
             db.ref('arcade_leaderboard/' + activeUserKey).set({
                 score: gameScore,
@@ -722,47 +703,29 @@ function gameOverState() {
     });
 }
 
-// Controller Deteksi Input Game (Keyboard, Click, Touch)
 window.addEventListener('keydown', function(e) {
-    if(e.code === 'Space' && isPlaying) {
-        e.preventDefault(); // Cegah layar scroll down saat lompat
-        bird.flap();
-    }
+    if(e.code === 'Space' && isPlaying) { e.preventDefault(); bird.flap(); }
 });
 gCanvas.addEventListener('mousedown', function() { if(isPlaying) bird.flap(); });
 gCanvas.addEventListener('touchstart', function(e) {
-    if(isPlaying) {
-        e.preventDefault(); 
-        bird.flap();
-    }
+    if(isPlaying) { e.preventDefault(); bird.flap(); }
 }, {passive: false});
 
-// Render Papan Skor Realtime
 function renderLeaderboard(lbData) {
     const lbContainer = document.getElementById('arcade-leaderboard-list');
     if(!lbContainer) return;
     
     lbContainer.innerHTML = '';
-    
     let scoresArray = [];
-    for(let key in lbData) {
-        scoresArray.push({ key: key, name: lbData[key].name, score: lbData[key].score });
-    }
+    for(let key in lbData) { scoresArray.push({ key: key, name: lbData[key].name, score: lbData[key].score }); }
     
-    // Urutkan dari tertinggi ke terendah
     scoresArray.sort((a, b) => b.score - a.score);
-    
-    if(scoresArray.length === 0) {
-        lbContainer.innerHTML = '<p style="color:gray;">Belum ada record skor. Jadilah yang pertama!</p>';
-        return;
-    }
     
     db.ref('biodata').once('value', (bioSnap) => {
         const allBios = bioSnap.val() || {};
         let rank = 1;
         scoresArray.forEach(p => {
             let avatarImg = (allBios[p.key] && allBios[p.key].avatar) ? allBios[p.key].avatar : "https://api.dicebear.com/7.x/adventurer/svg?seed=" + p.name;
-            
             let rankCrown = (rank === 1) ? '👑' : ((rank === 2) ? '🥈' : ((rank === 3) ? '🥉' : `#${rank}`));
             
             lbContainer.innerHTML += `
@@ -780,8 +743,7 @@ function renderLeaderboard(lbData) {
     });
 }
 
-
-// ================= BACKGROUND ANIMATION =================
+// ================= BACKGROUND ANIMATION (DI-OPTIMASI AGAR TIDAK LAG) =================
 const canvas = document.getElementById("bg-canvas");
 const ctx = canvas.getContext("2d");
 let particlesArray = [];
@@ -791,7 +753,8 @@ function initCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     particlesArray = [];
-    const numberOfParticles = (canvas.width * canvas.height) / 18000;
+    // OPTIMASI: Partikel dibatasi maksimal 35 agar laptop kentang bisa bernapas panjang
+    const numberOfParticles = Math.min((canvas.width * canvas.height) / 18000, 35);
     for (let i = 0; i < numberOfParticles; i++) {
         let size = (Math.random() * 2.5) + 1;
         let x = Math.random() * innerWidth;
