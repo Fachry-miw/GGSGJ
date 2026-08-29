@@ -66,7 +66,7 @@
             </div>
         </header>
 
-        <!-- MENU MELAYANG 7 TOMBOL -->
+        <!-- MENU MELAYANG 8 TOMBOL -->
         <div class="floating-circle-menu" id="floating-menu">
             <div class="circle-btn" onclick="switchPanel('history', this)" title="History">
                 <i class="fa-solid fa-road"></i>
@@ -85,6 +85,10 @@
             </div>
             <div class="circle-btn" onclick="switchPanel('chat', this)" title="Chat Room">
                 <i class="fa-solid fa-comments"></i> 
+            </div>
+            <!-- TOMBOL BARU: ARCADE GAME -->
+            <div class="circle-btn" onclick="switchPanel('arcade', this)" title="GGSGJ Arcade">
+                <i class="fa-solid fa-rocket"></i>
             </div>
             <div class="circle-btn btn-logout" onclick="logout()" title="Logout">
                 <i class="fa-solid fa-right-from-bracket"></i>
@@ -121,7 +125,7 @@
                 <div class="memory-gallery" id="memory-gallery-container"></div>
             </section>
 
-            <!-- PANEL BIODATA (Update 25 Avatar Alif) -->
+            <!-- PANEL BIODATA -->
             <section id="panel-biodata" class="content-panel">
                 <h2 class="panel-heading title-font">Biodata & Avatar</h2>
                 <div class="biodata-form-box">
@@ -130,7 +134,6 @@
                         <div class="form-group">
                             <label>Pilih Avatar Karakter (Karya Alif)</label>
                             <div class="avatar-grid">
-                                <!-- 25 Avatar -->
                                 <img src="ava1.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava1.jpg')">
                                 <img src="ava2.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava2.jpg')">
                                 <img src="ava3.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava3.jpg')">
@@ -209,6 +212,41 @@
                     </form>
                 </div>
             </section>
+
+            <!-- PANEL BARU: GGSGJ ARCADE GAME -->
+            <section id="panel-arcade" class="content-panel">
+                <h2 class="panel-heading title-font">GGSGJ Arcade (Flappy Circle)</h2>
+                <div class="arcade-wrapper">
+                    <div class="game-area">
+                        <canvas id="game-canvas" width="320" height="480"></canvas>
+                        
+                        <div id="game-ui-overlay" class="game-overlay">
+                            <h3 class="title-font" style="color: var(--color-camel); font-size: 2rem;">Flappy Circle</h3>
+                            <p style="font-size: 0.9rem; margin: 10px 0;">Gunakan Spasi / Tap Layar untuk Lompat</p>
+                            <button class="upload-btn" onclick="startGameEngine()">Mulai Main</button>
+                        </div>
+
+                        <div id="game-over-overlay" class="game-overlay" style="display: none;">
+                            <h3 style="color: #ff5e5e; font-size: 2.5rem; margin-bottom: 0;">Wasted!</h3>
+                            <p style="font-size: 1.2rem; margin: 10px 0;">Skor Kamu: <strong id="game-final-score" style="color: var(--color-camel); font-size: 1.5rem;">0</strong></p>
+                            <button class="upload-btn" onclick="resetGameEngine()" style="margin-top: 10px;">Main Lagi</button>
+                        </div>
+                        
+                        <!-- Skor live pas main -->
+                        <div id="game-live-score" style="display: none;">0</div>
+                    </div>
+
+                    <!-- LEADERBOARD REAL-TIME FIREBASE -->
+                    <div class="leaderboard-area">
+                        <h3 style="color: var(--color-camel); border-bottom: 1px solid var(--color-glass-border); padding-bottom: 10px; margin-bottom: 15px;">🏆 Top Global Score</h3>
+                        <div id="arcade-leaderboard-list">
+                            <!-- List di-generate JS -->
+                            <p style="color: gray; font-style: italic;">Memuat data skor...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </main>
     </div>
 
@@ -225,7 +263,6 @@
         </header>
 
         <div class="chat-fullscreen-wrapper">
-            <!-- Sidebar Chat (Daftar Teman + Dropdown) -->
             <div class="chat-sidebar-list">
                 <div class="chat-tab active" id="tab-public" onclick="openChatRoom('public')">
                     <i class="fa-solid fa-globe" style="font-size: 1.2rem; margin-right: 5px;"></i> Public Group
@@ -241,7 +278,6 @@
                 </div>
             </div>
             
-            <!-- Area Obrolan -->
             <div class="chat-main-area">
                 <div class="chat-header-title" id="chat-header-title">🌍 Public Group</div>
                 <div class="chat-messages-box" id="chat-messages-box"></div>
