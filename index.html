@@ -92,18 +92,26 @@
         </div>
 
         <main class="app-content">
+            <!-- PANEL HISTORY (Dengan Kalimat Keramat) -->
             <section id="panel-history" class="content-panel active-panel">
                 <h2 class="panel-heading title-font">Our History</h2>
                 <div class="history-box">
                     "All of our stories begin at a regular school who became an anchor of a small group of us, who always make an idiot action, but always have a life point wherever they go."
                 </div>
+
+                <h3 class="subtitle-font" style="color: var(--color-camel); margin-top: 3.5rem; margin-bottom: 1.5rem; text-align: center; font-weight: 600; font-size: 1.8rem;">Kalimat Keramat Our Member</h3>
+                <div id="keramat-container" class="keramat-container">
+                    <!-- Bubble digenerate oleh JavaScript -->
+                </div>
             </section>
 
+            <!-- PANEL MEMBERS -->
             <section id="panel-members" class="content-panel">
                 <h2 class="panel-heading title-font">Circle Members</h2>
                 <div class="members-grid" id="members-list-container"></div>
             </section>
 
+            <!-- PANEL MEMORY -->
             <section id="panel-memory" class="content-panel">
                 <h2 class="panel-heading title-font">Our Memories</h2>
                 <div class="memory-actions">
@@ -113,6 +121,7 @@
                 <div class="memory-gallery" id="memory-gallery-container"></div>
             </section>
 
+            <!-- PANEL BIODATA -->
             <section id="panel-biodata" class="content-panel">
                 <h2 class="panel-heading title-font">Biodata & Avatar</h2>
                 <div class="biodata-form-box">
@@ -151,6 +160,7 @@
                 </div>
             </section>
 
+            <!-- PANEL QUIZ (Update 5 Pertanyaan) -->
             <section id="panel-quiz" class="content-panel">
                 <h2 class="panel-heading title-font">GGSGJ Circle Quiz</h2>
                 <div class="quiz-container">
@@ -166,6 +176,14 @@
                         <div class="quiz-q-box">
                             <label>3. Siapa anggota yang menurut kalian "spesial"?</label>
                             <input type="text" id="quiz-ans-3" placeholder="Tulis jawabanmu..." required>
+                        </div>
+                        <div class="quiz-q-box">
+                            <label>4. Siapa anggota yang kira-kira paling gila/aktif di real life?</label>
+                            <input type="text" id="quiz-ans-4" placeholder="Tulis jawabanmu..." required>
+                        </div>
+                        <div class="quiz-q-box">
+                            <label>5. Siapa yang menurut kalian terlalu bucin?</label>
+                            <input type="text" id="quiz-ans-5" placeholder="Tulis jawabanmu..." required>
                         </div>
                         <button type="submit" class="save-biodata-btn">Kirim Laporan Quiz</button>
                     </form>
