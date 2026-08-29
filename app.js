@@ -32,6 +32,7 @@ localStorage.setItem('ggsgj_session_id', currentSessionId);
 
 let currentChatMode = 'public'; 
 let chatListenerRef = null;
+let keramatInitialized = false; // Flag untuk memastikan bubble hanya dirender sekali
 
 // ================= UI & NAVIGATION =================
 function showToast(message) {
@@ -85,6 +86,12 @@ function switchPanel(panelName, el) {
     document.getElementById(`panel-${panelName}`).classList.add('active-panel');
     el.classList.add('active');
     toggleSidebar();
+
+    // Trigger mesin fisika Bubble hanya saat masuk ke History
+    if(panelName === 'history' && !keramatInitialized) {
+        setTimeout(initKeramatBubbles, 100);
+        keramatInitialized = true;
+    }
 }
 
 function closeChatPage() {
@@ -164,6 +171,12 @@ function setupFirebaseRealtime() {
     });
     
     renderChatSidebar();
+
+    // Pastikan bubble keramat ter-load kalau panel history yang sedang aktif
+    if(!keramatInitialized && document.getElementById('panel-history').classList.contains('active-panel')) {
+        setTimeout(initKeramatBubbles, 300);
+        keramatInitialized = true;
+    }
 }
 
 function logout() {
@@ -210,6 +223,138 @@ function renderMemberList(statusData) {
                 </div>`;
         }
     });
+}
+
+// ================= MESIN FISIKA KALIMAT KERAMAT =================
+const KERAMAT_DATA = [
+    { name: "Hapes", quotes: ["SSheeeeessshhh"] },
+    { name: "Alif", quotes: ["What the hell", "Well well well"] },
+    { name: "Roni", quotes: ["ou shit", "even anjeng"] },
+    { name: "Fachry", quotes: ["I just give some words for prepare ur way"] },
+    { name: "Farel", quotes: ["langsung saja reg"] },
+    { name: "Fathir", quotes: ["Got caught by fbi"] },
+    { name: "David", quotes: ["tak perlu menjadi yang paling terang, cukup redup tapi tak pernah padam."] }
+];
+
+function initKeramatBubbles() {
+    const container = document.getElementById('keramat-container');
+    if(!container) return;
+    container.innerHTML = '';
+    
+    let bubbles = [];
+    
+    KERAMAT_DATA.forEach((member) => {
+        let el = document.createElement('div');
+        el.className = 'keramat-bubble';
+        
+        let nameEl = document.createElement('div');
+        nameEl.className = 'keramat-name';
+        nameEl.innerText = member.name;
+        el.appendChild(nameEl);
+        
+        member.quotes.forEach(q => {
+            let qEl = document.createElement('div');
+            qEl.className = 'keramat-quote';
+            qEl.innerText = `"${q}"`;
+            el.appendChild(qEl);
+        });
+        
+        container.appendChild(el);
+        
+        // Logika Fisika Posisi
+        let rect = container.getBoundingClientRect();
+        let bw = el.offsetWidth;
+        let bh = el.offsetHeight;
+        
+        let x = Math.random() * (rect.width - bw);
+        let y = Math.random() * (rect.height - bh);
+        let vx = (Math.random() - 0.5) * 1.5; 
+        let vy = (Math.random() - 0.5) * 1.5;
+        
+        let bubbleObj = { el, x, y, vx, vy, width: bw, height: bh, isDragging: false };
+        bubbles.push(bubbleObj);
+        
+        el.style.left = x + 'px';
+        el.style.top = y + 'px';
+        
+        // Drag and Drop (Support Mouse & Touch di HP)
+        let startX, startY, initialX, initialY;
+        
+        const dragStart = (e) => {
+            bubbleObj.isDragging = true;
+            el.style.zIndex = 100;
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            startX = clientX;
+            startY = clientY;
+            initialX = bubbleObj.x;
+            initialY = bubbleObj.y;
+        };
+        
+        const dragMove = (e) => {
+            if(!bubbleObj.isDragging) return;
+            e.preventDefault(); 
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            let newX = initialX + (clientX - startX);
+            let newY = initialY + (clientY - startY);
+            
+            let cRect = container.getBoundingClientRect();
+            if(newX < 0) newX = 0;
+            if(newX > cRect.width - bubbleObj.width) newX = cRect.width - bubbleObj.width;
+            if(newY < 0) newY = 0;
+            if(newY > cRect.height - bubbleObj.height) newY = cRect.height - bubbleObj.height;
+            
+            bubbleObj.x = newX;
+            bubbleObj.y = newY;
+            el.style.left = newX + 'px';
+            el.style.top = newY + 'px';
+        };
+        
+        const dragEnd = () => {
+            bubbleObj.isDragging = false;
+            el.style.zIndex = 10;
+        };
+        
+        el.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', dragMove);
+        document.addEventListener('mouseup', dragEnd);
+        
+        el.addEventListener('touchstart', dragStart, {passive: false});
+        document.addEventListener('touchmove', dragMove, {passive: false});
+        document.addEventListener('touchend', dragEnd);
+    });
+    
+    // Mesin Animasi (Membentur Tembok)
+    function animate() {
+        let rect = container.getBoundingClientRect();
+        if(rect.width === 0) {
+            requestAnimationFrame(animate);
+            return;
+        }
+
+        bubbles.forEach(b => {
+            if(b.isDragging) return;
+            
+            b.x += b.vx;
+            b.y += b.vy;
+            
+            if(b.x <= 0 || b.x >= rect.width - b.width) {
+                b.vx *= -1;
+                b.x = b.x <= 0 ? 0 : rect.width - b.width;
+            }
+            if(b.y <= 0 || b.y >= rect.height - b.height) {
+                b.vy *= -1;
+                b.y = b.y <= 0 ? 0 : rect.height - b.height;
+            }
+            
+            b.el.style.left = b.x + 'px';
+            b.el.style.top = b.y + 'px';
+        });
+        requestAnimationFrame(animate);
+    }
+    animate();
 }
 
 // ================= FITUR DATABASE LAINNYA =================
@@ -324,7 +469,6 @@ function toggleChatDropdown(e) {
     icon.classList.toggle('fa-chevron-down');
 }
 
-// Tutup dropdown jika klik di luar area dropdown
 window.addEventListener('click', () => {
     const content = document.getElementById('dm-list-container');
     const icon = document.getElementById('dropdown-arrow-icon');
@@ -417,6 +561,8 @@ function submitQuiz(e) {
     const ans1 = document.getElementById('quiz-ans-1').value;
     const ans2 = document.getElementById('quiz-ans-2').value;
     const ans3 = document.getElementById('quiz-ans-3').value;
+    const ans4 = document.getElementById('quiz-ans-4').value;
+    const ans5 = document.getElementById('quiz-ans-5').value;
     const userName = CIRCLE_USERS[activeUserKey].name;
     const currentTime = new Date().toLocaleString('id-ID');
 
@@ -425,6 +571,8 @@ function submitQuiz(e) {
         ans_1: ans1,
         ans_2: ans2,
         ans_3: ans3,
+        ans_4: ans4,
+        ans_5: ans5,
         time: currentTime
     };
 
