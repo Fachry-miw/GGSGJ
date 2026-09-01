@@ -93,6 +93,17 @@ function switchPanel(panelName, el) {
     }
 }
 
+// LOGIKA NAVIGASI UNTUK HUB GAMES
+function openSubGame(gameId) {
+    document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active-panel'));
+    document.getElementById(`panel-${gameId}`).classList.add('active-panel');
+}
+
+function backToGames() {
+    document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active-panel'));
+    document.getElementById('panel-games').classList.add('active-panel');
+}
+
 function closeChatPage() {
     changePage('page-main');
 }
@@ -172,7 +183,6 @@ function setupFirebaseRealtime() {
         renderMemoryGallery(snap.val() || {});
     });
     
-    // Perbaikan Bug Papan Skor Loading Terus (Jika Database Masih Kosong)
     const lbContainer = document.getElementById('arcade-leaderboard-list');
     db.ref('arcade_leaderboard').on('value', (snap) => {
         if(!snap.exists()) {
@@ -743,7 +753,7 @@ function renderLeaderboard(lbData) {
     });
 }
 
-// ================= BACKGROUND ANIMATION (DI-OPTIMASI AGAR TIDAK LAG) =================
+// ================= BACKGROUND ANIMATION =================
 const canvas = document.getElementById("bg-canvas");
 const ctx = canvas.getContext("2d");
 let particlesArray = [];
@@ -753,7 +763,6 @@ function initCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     particlesArray = [];
-    // OPTIMASI: Partikel dibatasi maksimal 35 agar laptop kentang bisa bernapas panjang
     const numberOfParticles = Math.min((canvas.width * canvas.height) / 18000, 35);
     for (let i = 0; i < numberOfParticles; i++) {
         let size = (Math.random() * 2.5) + 1;
