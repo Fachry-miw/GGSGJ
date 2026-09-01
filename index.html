@@ -4,27 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GGSGJ - Forever Until End of World</title>
-    <!-- Google Fonts Modern -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link rel="stylesheet" href="style.css">
     
-    <!-- EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
        (function(){
           emailjs.init("MbpSI16ZTHMcgju_H");
        })();
     </script>
-
-    <!-- FIREBASE SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
-    <!-- COMPILER PYTHON (BRYTHON) -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.12.0/brython.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.12.0/brython_stdlib.min.js"></script>
 </head>
@@ -35,14 +26,12 @@
     
     <div id="toast">Notifikasi GGSGJ</div>
 
-    <!-- HALAMAN 1: Welcome -->
     <div id="page-index" class="page active">
         <h1 class="index-title-main title-font">GGSGJ</h1>
         <p class="index-subtitle-main subtitle-font">Forever until end of world</p>
         <button class="bubble-btn" onclick="triggerBubble(this)">Let's start</button>
     </div>
 
-    <!-- HALAMAN 2: Login -->
     <div id="page-login" class="page">
         <div class="login-card">
             <h1 class="title-font">GGSGJ</h1>
@@ -61,7 +50,6 @@
         </div>
     </div>
 
-    <!-- HALAMAN 3: WORKSPACE UTAMA -->
     <div id="page-main" class="page">
         <header class="app-header">
             <h2 class="header-title title-font">GGSGJ</h2>
@@ -70,7 +58,7 @@
             </div>
         </header>
 
-        <!-- MENU MELAYANG 9 TOMBOL -->
+        <!-- MENU MELAYANG 7 TOMBOL -->
         <div class="floating-circle-menu" id="floating-menu">
             <div class="circle-btn" onclick="switchPanel('history', this)" title="History">
                 <i class="fa-solid fa-road"></i>
@@ -84,18 +72,12 @@
             <div class="circle-btn" onclick="switchPanel('biodata', this)" title="Biodata">
                 <i class="fa-solid fa-file-signature"></i>
             </div>
-            <div class="circle-btn" onclick="switchPanel('quiz', this)" title="Circle Quiz">
-                <i class="fa-solid fa-gamepad"></i>
-            </div>
             <div class="circle-btn" onclick="switchPanel('chat', this)" title="Chat Room">
                 <i class="fa-solid fa-comments"></i> 
             </div>
-            <div class="circle-btn" onclick="switchPanel('arcade', this)" title="GGSGJ Arcade">
-                <i class="fa-solid fa-rocket"></i>
-            </div>
-            <!-- TOMBOL BARU: PYTHON TERMINAL -->
-            <div class="circle-btn" onclick="switchPanel('python', this)" title="Python Predictor">
-                <i class="fa-brands fa-python"></i>
+            <!-- HUB GGSGJ GAMES -->
+            <div class="circle-btn" onclick="switchPanel('games', this)" title="GGSGJ Games">
+                <i class="fa-solid fa-gamepad"></i>
             </div>
             <div class="circle-btn btn-logout" onclick="logout()" title="Logout">
                 <i class="fa-solid fa-right-from-bracket"></i>
@@ -103,7 +85,6 @@
         </div>
 
         <main class="app-content">
-            <!-- PANEL HISTORY -->
             <section id="panel-history" class="content-panel active-panel">
                 <h2 class="panel-heading title-font">Our History</h2>
                 <div class="history-box">
@@ -114,13 +95,11 @@
                 <div id="keramat-container" class="keramat-container"></div>
             </section>
 
-            <!-- PANEL MEMBERS -->
             <section id="panel-members" class="content-panel">
                 <h2 class="panel-heading title-font">Circle Members</h2>
                 <div class="members-grid" id="members-list-container"></div>
             </section>
 
-            <!-- PANEL MEMORY -->
             <section id="panel-memory" class="content-panel">
                 <h2 class="panel-heading title-font">Our Memories</h2>
                 <div class="memory-actions">
@@ -130,7 +109,6 @@
                 <div class="memory-gallery" id="memory-gallery-container"></div>
             </section>
 
-            <!-- PANEL BIODATA -->
             <section id="panel-biodata" class="content-panel">
                 <h2 class="panel-heading title-font">Biodata & Avatar</h2>
                 <div class="biodata-form-box">
@@ -188,8 +166,32 @@
                 </div>
             </section>
 
-            <!-- PANEL QUIZ -->
+            <!-- PANEL UTAMA GGSGJ GAMES -->
+            <section id="panel-games" class="content-panel">
+                <h2 class="panel-heading title-font">GGSGJ Games Center</h2>
+                <p style="margin-bottom: 2rem; color: #aaa; font-size: 1.1rem;">Pilih arena bermain atau fitur interaktif di bawah ini:</p>
+                <div class="games-menu-grid">
+                    <div class="game-card" onclick="openSubGame('quiz')">
+                        <i class="fa-solid fa-clipboard-question game-icon"></i>
+                        <h3>Circle Quiz</h3>
+                        <p>Uji seberapa kenal kamu dengan circle GGSGJ.</p>
+                    </div>
+                    <div class="game-card" onclick="openSubGame('arcade')">
+                        <i class="fa-solid fa-rocket game-icon"></i>
+                        <h3>Flappy Circle</h3>
+                        <p>Game arcade adu mekanik & global leaderboard.</p>
+                    </div>
+                    <div class="game-card" onclick="openSubGame('python')">
+                        <i class="fa-brands fa-python game-icon"></i>
+                        <h3>Python Predictor</h3>
+                        <p>Sistem AI penebak khodam & masa depan.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SUB-PANEL QUIZ -->
             <section id="panel-quiz" class="content-panel">
+                <button class="back-btn-sub" onclick="backToGames()"><i class="fa-solid fa-arrow-left"></i> Kembali ke Menu Game</button>
                 <h2 class="panel-heading title-font">GGSGJ Circle Quiz</h2>
                 <div class="quiz-container">
                     <form id="quiz-form" onsubmit="submitQuiz(event)">
@@ -218,8 +220,9 @@
                 </div>
             </section>
 
-            <!-- PANEL ARCADE GAME -->
+            <!-- SUB-PANEL ARCADE GAME -->
             <section id="panel-arcade" class="content-panel">
+                <button class="back-btn-sub" onclick="backToGames()"><i class="fa-solid fa-arrow-left"></i> Kembali ke Menu Game</button>
                 <h2 class="panel-heading title-font">GGSGJ Arcade (Flappy Circle)</h2>
                 <div class="arcade-wrapper">
                     <div class="game-area">
@@ -249,8 +252,9 @@
                 </div>
             </section>
 
-            <!-- PANEL BARU: PYTHON TERMINAL -->
+            <!-- SUB-PANEL PYTHON TERMINAL -->
             <section id="panel-python" class="content-panel">
+                <button class="back-btn-sub" onclick="backToGames()"><i class="fa-solid fa-arrow-left"></i> Kembali ke Menu Game</button>
                 <h2 class="panel-heading title-font">Python AI Predictor</h2>
                 <div class="python-wrapper">
                     <p style="margin-bottom:15px; color:#aaa; font-size: 0.9rem;">
@@ -263,7 +267,6 @@
                     <div id="py-output" class="terminal-output">root@ggsgj-server:~# Sistem Python Ready. Menunggu input...</div>
                 </div>
                 
-                <!-- INI ADALAH KODE PYTHON ASLI YANG BERJALAN DI BROWSER -->
                 <script type="text/python">
                     from browser import document, timer
                     import random
@@ -297,10 +300,8 @@
                             
                             document["py-output"].text = hasil
                         
-                        # Animasi delay loading bohong-bohongan ala hacker (1.5 detik)
                         timer.set_timeout(tampilkan_hasil, 1500)
 
-                    # Binding tombol HTML ke fungsi Python
                     document["py-btn"].bind("click", jalankan_prediksi)
                 </script>
             </section>
