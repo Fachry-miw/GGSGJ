@@ -237,7 +237,7 @@ function renderMemberList(statusData) {
                     </div>
                     <div class="status-indicator">
                         <span class="status-dot ${isOnline ? 'online' : 'offline'}"></span>
-                        <span style="color: ${isOnline ? 'var(--color-white)' : 'var(--offline-gray)'};">
+                        <span style="color: ${isOnline ? 'var(--color-primary)' : 'var(--offline-gray)'}; font-weight: 600;">
                             ${isOnline ? 'Online' : 'Offline'}
                         </span>
                     </div>
@@ -403,7 +403,7 @@ function renderMemoryGallery(memoriesObj) {
     
     const keys = Object.keys(memoriesObj);
     if (keys.length === 0) {
-        gallery.innerHTML = '<p style="color:gray; grid-column: 1/-1;">Belum ada memori. Yuk upload foto pertama circle kalian!</p>';
+        gallery.innerHTML = '<p style="color:var(--color-text-muted); grid-column: 1/-1;">Belum ada memori. Yuk upload foto pertama circle kalian!</p>';
         return;
     }
 
@@ -487,14 +487,14 @@ function openChatRoom(targetMode) {
     if(chatListenerRef) chatListenerRef.off();
 
     const box = document.getElementById('chat-messages-box');
-    box.innerHTML = '<i>Memuat pesan...</i>';
+    box.innerHTML = '<i style="color: var(--color-text-muted);">Memuat pesan...</i>';
 
     chatListenerRef = db.ref(chatPath);
     chatListenerRef.on('value', (snap) => {
         box.innerHTML = '';
         const data = snap.val();
         if(!data) {
-            box.innerHTML = '<p style="color:#aaa; text-align:center;">Belum ada pesan. Mulai obrolan!</p>';
+            box.innerHTML = '<p style="color:var(--color-text-muted); text-align:center;">Belum ada pesan. Mulai obrolan!</p>';
             return;
         }
 
@@ -582,7 +582,7 @@ const bird = {
         gCtx.beginPath();
         gCtx.arc(this.x + this.width/2, this.y + this.height/2, this.width/2, 0, Math.PI * 2);
         gCtx.lineWidth = 3;
-        gCtx.strokeStyle = "#F4D35E";
+        gCtx.strokeStyle = "#D4AF37";
         gCtx.stroke();
     },
     update: function() {
@@ -612,7 +612,7 @@ const pipes = {
             let topYPos = p.y;
             let bottomYPos = p.y + this.gap;
             
-            gCtx.fillStyle = "#2B1B17";
+            gCtx.fillStyle = "#0F172A";
             gCtx.fillRect(p.x, 0, this.width, topYPos);
             gCtx.lineWidth = 2;
             gCtx.strokeStyle = "#3A86EF";
@@ -652,7 +652,7 @@ const pipes = {
 
 function drawGame() {
     gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
-    gCtx.fillStyle = "#70c5ce"; 
+    gCtx.fillStyle = "#E0F2FE"; 
     gCtx.fillRect(0, 0, gCanvas.width, gCanvas.height);
     pipes.draw();
     bird.draw();
@@ -770,7 +770,8 @@ function initCanvas() {
         let y = Math.random() * innerHeight;
         let dirX = (Math.random() * 0.8) - 0.4;
         let dirY = (Math.random() * 0.8) - 0.4;
-        let color = Math.random() > 0.5 ? '#3A86EF' : '#F4D35E';
+        // Penyesuaian warna efek partikel sesuai tampilan Clean/Terang (biru transparan & emas transparan)
+        let color = Math.random() > 0.5 ? 'rgba(58, 134, 239, 0.3)' : 'rgba(212, 175, 55, 0.4)';
         particlesArray.push({x, y, dirX, dirY, size, color});
     }
 }
