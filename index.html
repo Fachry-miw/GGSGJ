@@ -17,7 +17,6 @@
     <!-- HALAMAN 1: LANDING PAGE -->
     <div id="page-index" class="page active">
         <div class="brand-container-large">
-            <!-- Memanggil logo baru kamu -->
             <img src="58990.jpg" alt="GGSGJ Logo" class="brand-logo-large">
         </div>
         <h1 class="title-font index-title-main">GGSGJ</h1>
@@ -56,7 +55,156 @@
         </div>
     </div>
 
-    <!-- Notifikasi Bawah -->
+    <!-- HALAMAN 3: MAIN APP PORTAL -->
+    <div id="page-main" class="page">
+        <header class="app-header">
+            <div class="brand-container-header">
+                <img src="58990.jpg" alt="Logo" class="brand-logo-header">
+                <h2 class="title-font header-title">GGSGJ</h2>
+            </div>
+            <div id="hamburger" class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </header>
+
+        <!-- Floating Menu (Navigasi Cepat) -->
+        <nav id="floating-menu" class="floating-circle-menu">
+            <div class="circle-btn" data-target="history" title="Sejarah">📜</div>
+            <div class="circle-btn" data-target="keramat" title="Anggota Keramat">⚡</div>
+            <div class="circle-btn" data-target="members" title="Daftar Member">👥</div>
+            <div class="circle-btn" data-target="memories" title="Galeri Kenangan">🖼️</div>
+            <div class="circle-btn" data-target="biodata" title="Biodata & Quiz">📝</div>
+            <div class="circle-btn" data-target="games" title="Mini Games">🎮</div>
+            <div class="circle-btn btn-logout" id="logout-btn" title="Keluar">🚪</div>
+        </nav>
+
+        <main class="app-content">
+            <!-- Panel Sejarah -->
+            <section id="panel-history" class="content-panel active-panel">
+                <h1 class="panel-heading title-font">Sejarah GGSGJ</h1>
+                <div class="history-box">
+                    "GGSGJ lahir dari kebersamaan yang tulus, perjuangan tanpa kenal lelah, serta canda tawa yang mengukir sejarah abadi di antara kita. Forever until end of world."
+                </div>
+            </section>
+
+            <!-- Panel Anggota Keramat -->
+            <section id="panel-keramat" class="content-panel">
+                <h1 class="panel-heading title-font">Anggota Keramat</h1>
+                <div class="keramat-container" id="keramat-area"></div>
+            </section>
+
+            <!-- Panel Daftar Member -->
+            <section id="panel-members" class="content-panel">
+                <h1 class="panel-heading title-font">Daftar Anggota</h1>
+                <div class="members-grid" id="members-list-container"></div>
+            </section>
+
+            <!-- Panel Galeri Kenangan -->
+            <section id="panel-memories" class="content-panel">
+                <h1 class="panel-heading title-font">Galeri Kenangan</h1>
+                <div class="memory-actions">
+                    <button class="upload-btn" id="upload-memory-trigger">+ Tambah Kenangan</button>
+                    <input type="file" id="file-input" accept="image/*">
+                </div>
+                <div class="memory-gallery" id="gallery-container"></div>
+            </section>
+
+            <!-- Panel Biodata & Quiz -->
+            <section id="panel-biodata" class="content-panel">
+                <h1 class="panel-heading title-font">Biodata & Quiz</h1>
+                <div class="biodata-form-box">
+                    <div class="clean-input-group">
+                        <label>NAMA LENGKAP</label>
+                        <input type="text" id="bio-name" placeholder="Nama kamu...">
+                    </div>
+                    <div class="clean-input-group" style="margin-top: 15px;">
+                        <label>PILIH AVATAR</label>
+                        <div class="avatar-grid" id="avatar-picker"></div>
+                    </div>
+                    <button class="save-biodata-btn" id="save-bio-btn">Simpan Perubahan</button>
+                </div>
+            </section>
+
+            <!-- Panel Mini Games -->
+            <section id="panel-games" class="content-panel">
+                <h1 class="panel-heading title-font">GGSGJ Arcade</h1>
+                <div id="games-menu" class="games-menu-grid">
+                    <div class="game-card" data-game="flappy">
+                        <div class="game-icon">🐦</div>
+                        <h3>GGSGJ Fly</h3>
+                        <p>Terbangkan maskot melewati rintangan!</p>
+                    </div>
+                    <div class="game-card" data-game="python">
+                        <div class="game-icon">💻</div>
+                        <h3>Python Terminal</h3>
+                        <p>Simulasi eksekusi kode python interaktif.</p>
+                    </div>
+                </div>
+
+                <!-- Sub-Game: Flappy -->
+                <div id="sub-game-flappy" style="display: none;">
+                    <button class="back-btn-sub" id="back-to-games">← Kembali ke Menu Games</button>
+                    <div class="arcade-wrapper">
+                        <div class="game-area">
+                            <div id="game-live-score">0</div>
+                            <canvas id="game-canvas" width="320" height="480"></canvas>
+                            <div id="game-overlay-box" class="game-overlay">
+                                <h2 style="color:white; margin-bottom:15px;">GGSGJ FLY</h2>
+                                <button class="bubble-btn" id="start-game-btn" style="padding: 0.8rem 2rem; font-size:1rem;">Mulai Main</button>
+                            </div>
+                        </div>
+                        <div class="leaderboard-area">
+                            <h3 style="margin-bottom: 15px; color: var(--color-primary);">Leaderboard</h3>
+                            <div id="leaderboard-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sub-Game: Python Terminal -->
+                <div id="sub-game-python" style="display: none;">
+                    <button class="back-btn-sub" id="back-to-games-py">← Kembali ke Menu Games</button>
+                    <div class="python-wrapper">
+                        <h3 style="margin-bottom: 10px; color: var(--color-primary);">Python Playground</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: 15px;">Ketik kode Python di bawah:</p>
+                        <textarea id="py-code-input" rows="5" style="width:100%; padding:12px; border-radius:8px; border:1px solid #E2E8F0; font-family:monospace; background:#F8FAFC;">print("Halo GGSGJ!")</textarea>
+                        <button class="upload-btn" id="run-py-btn" style="margin-top: 15px;">Run Code</button>
+                        <div class="terminal-output" id="py-output">Output akan muncul di sini...</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- HALAMAN 4: CHAT ROOM -->
+    <div id="page-chat" class="page">
+        <header class="app-header">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="back-btn" id="back-to-main">← <span>Kembali</span></button>
+                <h2 class="title-font header-title">GGSGJ Chat <span class="chat-header-subtitle">Room</span></h2>
+            </div>
+        </header>
+        <div class="chat-fullscreen-wrapper">
+            <div class="chat-sidebar-list" id="chat-sidebar">
+                <div class="chat-tab active" data-chat="global">🌍 Global Chat</div>
+                <div class="chat-dropdown-container">
+                    <button class="chat-dropdown-btn" id="chat-dropdown-toggle"><span>Private Chat</span> ▾</button>
+                    <div class="chat-dropdown-content" id="chat-dropdown-list"></div>
+                </div>
+            </div>
+            <div class="chat-main-area">
+                <div class="chat-header-title" id="active-chat-title">Global Room</div>
+                <div class="chat-messages-box" id="chat-messages"></div>
+                <div class="chat-input-form">
+                    <input type="text" id="chat-input" placeholder="Tulis pesan...">
+                    <button id="send-chat-btn">➤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifikasi Toast -->
     <div id="toast">Notifikasi GGSGJ</div>
 
     <!-- Hubungkan ke JavaScript -->
