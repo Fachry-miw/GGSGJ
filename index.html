@@ -3,164 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GGSGJ - Forever Until End of World</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>GGSGJ Portal</title>
+    <!-- Import Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Hubungkan ke CSS -->
     <link rel="stylesheet" href="style.css">
-    
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script type="text/javascript">
-       (function(){
-          emailjs.init("MbpSI16ZTHMcgju_H");
-       })();
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.12.0/brython.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.12.0/brython_stdlib.min.js"></script>
 </head>
-<body onload="brython()">
-
+<body>
+    <!-- Background Layar -->
     <div class="bg-photo-overlay"></div>
     <canvas id="bg-canvas"></canvas>
-    
-    <div id="toast">Notifikasi GGSGJ</div>
 
-    <!-- HALAMAN DEPAN -->
+    <!-- HALAMAN 1: LANDING PAGE -->
     <div id="page-index" class="page active">
         <div class="brand-container-large">
+            <!-- Memanggil logo baru kamu -->
             <img src="58990.jpg" alt="GGSGJ Logo" class="brand-logo-large">
-            <h1 class="index-title-main title-font">GGSGJ</h1>
         </div>
-        <p class="index-subtitle-main subtitle-font">Forever until end of world</p>
-        <button class="bubble-btn" onclick="triggerBubble(this)">Let's start</button>
+        <h1 class="title-font index-title-main">GGSGJ</h1>
+        <p class="subtitle-font index-subtitle-main">Forever until end of world</p>
+        
+        <!-- Tombol Let's Start -->
+        <button id="start-btn" class="bubble-btn">Let's start</button>
     </div>
 
-    <!-- HALAMAN LOGIN (CLEAN DESIGN) -->
+    <!-- HALAMAN 2: LOGIN PAGE -->
     <div id="page-login" class="page">
         <div class="login-card">
             <div class="brand-container-login">
-                <img src="58990.jpg" alt="GGSGJ Logo" class="brand-logo-login">
-                <h2 class="title-font">GGSGJ Portal</h2>
+                <img src="58990.jpg" alt="Logo" class="brand-logo-login">
+                <h2 class="title-font">GGSGJ</h2>
             </div>
-            <h1 class="login-heading">Masuk ke Akun Anda</h1>
-            <p class="login-sub">Silakan masukkan kredensial portal resmi GGSGJ yang telah terdaftar</p>
-            <form onsubmit="handleLoginSubmit(event)">
-                <div class="form-group">
-                    <label>USERNAME ATAU EMAIL</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-at input-icon"></i>
-                        <input type="text" id="username-input" autocomplete="off" placeholder="Masukkan username..." required>
-                    </div>
+            <h1 class="login-heading">Welcome Back</h1>
+            <p class="login-sub">Enter your credentials to continue</p>
+            
+            <div class="form-group">
+                <label>USERNAME</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">👤</span>
+                    <input type="text" id="username" placeholder="Masukkan username">
                 </div>
-                <div class="form-group">
-                    <label>KATA SANDI</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-lock input-icon"></i>
-                        <input type="password" id="password-input" placeholder="Masukkan kata sandi..." required>
-                    </div>
+            </div>
+            <div class="form-group">
+                <label>PASSWORD</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="password" placeholder="Masukkan password">
                 </div>
-                <button type="submit" id="login-action-btn" class="solid-login-btn">Masuk <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i></button>
-            </form>
-            <p id="login-error-msg" class="error-text">Ups, kunci akses salah atau aktif di device lain!</p>
+            </div>
+            <p id="login-error" class="error-text">Username atau password salah!</p>
+            <button id="login-btn" class="solid-login-btn">Login</button>
         </div>
     </div>
 
-    <!-- HALAMAN UTAMA -->
-    <div id="page-main" class="page">
-        <header class="app-header">
-            <div class="brand-container-header">
-                <img src="58990.jpg" alt="GGSGJ Logo" class="brand-logo-header">
-                <h2 class="header-title title-font">GGSGJ</h2>
-            </div>
-            <div class="hamburger-menu" id="hamburger-btn" onclick="toggleSidebar()">
-                <span></span><span></span><span></span>
-            </div>
-        </header>
+    <!-- Notifikasi Bawah -->
+    <div id="toast">Notifikasi GGSGJ</div>
 
-        <!-- MENU MELAYANG 7 TOMBOL -->
-        <div class="floating-circle-menu" id="floating-menu">
-            <div class="circle-btn" onclick="switchPanel('history', this)" title="History"><i class="fa-solid fa-road"></i></div>
-            <div class="circle-btn" onclick="switchPanel('members', this)" title="Members"><i class="fa-solid fa-users"></i></div>
-            <div class="circle-btn" onclick="switchPanel('memory', this)" title="Memory"><i class="fa-solid fa-camera-retro"></i></div>
-            <div class="circle-btn" onclick="switchPanel('biodata', this)" title="Biodata"><i class="fa-solid fa-file-signature"></i></div>
-            <div class="circle-btn" onclick="switchPanel('chat', this)" title="Chat Room"><i class="fa-solid fa-comments"></i></div>
-            <div class="circle-btn" onclick="switchPanel('games', this)" title="GGSGJ Games"><i class="fa-solid fa-gamepad"></i></div>
-            <div class="circle-btn btn-logout" onclick="logout()" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></div>
-        </div>
-
-        <main class="app-content">
-            <section id="panel-history" class="content-panel active-panel">
-                <h2 class="panel-heading title-font">Our History</h2>
-                <div class="history-box">
-                    "All of our stories begin at a regular school who became an anchor of a small group of us, who always make an idiot action, but always have a life point wherever they go."
-                </div>
-
-                <h3 class="subtitle-font" style="color: var(--color-gold); margin-top: 3.5rem; margin-bottom: 1.5rem; text-align: center; font-weight: 600; font-size: 1.8rem;">Kalimat Keramat Our Member</h3>
-                <div id="keramat-container" class="keramat-container"></div>
-            </section>
-
-            <section id="panel-members" class="content-panel">
-                <h2 class="panel-heading title-font">Circle Members</h2>
-                <div class="members-grid" id="members-list-container"></div>
-            </section>
-
-            <section id="panel-memory" class="content-panel">
-                <h2 class="panel-heading title-font">Our Memories</h2>
-                <div class="memory-actions">
-                    <button class="upload-btn" onclick="document.getElementById('file-input').click()"><i class="fa-solid fa-camera"></i> Upload Foto</button>
-                    <input type="file" id="file-input" accept="image/*" onchange="handleImageUpload(event)">
-                </div>
-                <div class="memory-gallery" id="memory-gallery-container"></div>
-            </section>
-
-            <section id="panel-biodata" class="content-panel">
-                <h2 class="panel-heading title-font">Biodata & Avatar</h2>
-                <div class="biodata-form-box">
-                    <p>Halo, <span id="current-user-greeting" style="font-weight: bold; color: var(--color-gold);"></span>!</p>
-                    <form onsubmit="saveBiodata(event)">
-                        <div class="form-group">
-                            <label>Pilih Avatar Karakter (Karya Alif)</label>
-                            <div class="avatar-grid">
-                                <img src="ava1.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava1.jpg')">
-                                <img src="ava2.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava2.jpg')">
-                                <img src="ava3.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava3.jpg')">
-                                <img src="ava4.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava4.jpg')">
-                                <img src="ava5.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava5.jpg')">
-                                <img src="ava6.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava6.jpg')">
-                                <img src="ava7.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava7.jpg')">
-                                <img src="ava8.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava8.jpg')">
-                                <img src="ava9.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava9.jpg')">
-                                <img src="ava10.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava10.jpg')">
-                                <img src="ava11.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava11.jpg')">
-                                <img src="ava12.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava12.jpg')">
-                                <img src="ava13.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava13.jpg')">
-                                <img src="ava14.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava14.jpg')">
-                                <img src="ava15.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava15.jpg')">
-                                <img src="ava16.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava16.jpg')">
-                                <img src="ava17.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava17.jpg')">
-                                <img src="ava18.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava18.jpg')">
-                                <img src="ava19.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava19.jpg')">
-                                <img src="ava20.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava20.jpg')">
-                                <img src="ava21.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava21.jpg')">
-                                <img src="ava22.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava22.jpg')">
-                                <img src="ava23.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava23.jpg')">
-                                <img src="ava24.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava24.jpg')">
-                                <img src="ava25.jpg" class="avatar-option" onclick="selectAvatar(this, 'ava25.jpg')">
-                            </div>
-                            <input type="hidden" id="bio-avatar" value="ava1.jpg">
-                        </div>
-                        <div class="form-group clean-input-group">
-                            <label>Nama Lengkap</label>
-                            <input type="text" id="bio-fullname" required>
-                        </div>
-                        <div class="form-group clean-input-group">
-                            <label>Umur</label>
-                            <input type="number" id="bio-age" required>
-                        </div>
-                        <div class="form-group clean-input-group">
-                            <label>Tanggal Ulang Tahun</label>
-                            <input type="date" id="bio-birthday" required>
-                        </div>
-                        <div class="form-group clean-input-group">
-                            <label>Nama Sekolah</
+    <!-- Hubungkan ke JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
